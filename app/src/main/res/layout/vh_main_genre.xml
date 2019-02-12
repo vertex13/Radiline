@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/space_normal"
+    android:paddingTop="@dimen/space_small"
+    android:paddingRight="@dimen/space_normal"
+    android:paddingBottom="@dimen/space_small">
+
+    <TextView
+        android:id="@+id/vhmg_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/genreBackground"
+        android:padding="@dimen/space_normal"
+        android:textColor="@android:color/white"
+        tools:text="Genre" />
+
+</FrameLayout>
