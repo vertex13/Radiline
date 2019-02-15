@@ -2,6 +2,7 @@ package xyz.skether.radiline.ui.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_base_main.*
 import xyz.skether.radiline.R
@@ -17,7 +18,9 @@ class SearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(activity)
+            val lm = LinearLayoutManager(context)
+            layoutManager = lm
+            addItemDecoration(DividerItemDecoration(context, lm.orientation))
             adapter = this@SearchFragment.adapter
         }
     }

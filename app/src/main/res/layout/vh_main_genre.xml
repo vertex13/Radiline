@@ -3,18 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/space_normal"
-    android:paddingTop="@dimen/space_small"
-    android:paddingRight="@dimen/space_normal"
-    android:paddingBottom="@dimen/space_small">
+    android:paddingLeft="@dimen/space_xlarge"
+    android:paddingTop="@dimen/space_normal"
+    android:paddingRight="@dimen/space_xlarge"
+    android:paddingBottom="@dimen/space_normal">
 
     <TextView
         android:id="@+id/vhmg_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/genreBackground"
-        android:padding="@dimen/space_normal"
-        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_large"
         tools:text="Genre" />
 
 </FrameLayout>

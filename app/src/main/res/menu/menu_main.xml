@@ -5,9 +5,14 @@
     tools:context="xyz.skether.radiline.ui.main.MainActivity">
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_previous"
+        android:title="@string/main_action_previous"
+        android:icon="@drawable/ic_skip_previous_white_24dp"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_info"
+        android:title="@string/main_action_info"
         app:showAsAction="never" />
 
 </menu>

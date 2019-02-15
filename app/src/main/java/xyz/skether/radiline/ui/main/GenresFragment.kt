@@ -2,6 +2,7 @@ package xyz.skether.radiline.ui.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_base_main.*
 import xyz.skether.radiline.R
@@ -18,7 +19,9 @@ class GenresFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(activity)
+            val lm = LinearLayoutManager(context)
+            layoutManager = lm
+            addItemDecoration(DividerItemDecoration(context, lm.orientation))
             adapter = this@GenresFragment.adapter
         }
     }
@@ -32,13 +35,13 @@ class GenresFragment : BaseFragment() {
                 val subGenre = Genre(i * 1000 + j, "Sub Genre #$j", false, genre)
                 subGenre.stations = mutableListOf()
                 for (k in 1..5) {
-                    subGenre.stations!!.add(Station(i, "Station #$k - Genre $i-$j", subGenre))
+                    subGenre.stations!!.add(Station(i, "Station #$k - Genre $i-$j", genre = subGenre))
                 }
                 genre.subGenres!!.add(subGenre)
             }
             genre.stations = mutableListOf()
             for (k in 1..2) {
-                genre.stations!!.add(Station(i, "Station #$k - Genre $i", genre))
+                genre.stations!!.add(Station(i, "Station #$k - Genre $i", genre = genre))
             }
             genres.add(genre)
         }

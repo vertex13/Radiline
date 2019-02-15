@@ -32,7 +32,8 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_settings -> true
+        R.id.action_previous -> true
+        R.id.action_info -> true
         else -> super.onOptionsItemSelected(item)
     }
 

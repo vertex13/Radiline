@@ -2,18 +2,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/space_normal"
-    android:paddingTop="@dimen/space_small"
-    android:paddingRight="@dimen/space_normal"
-    android:paddingBottom="@dimen/space_small">
+    android:paddingLeft="@dimen/space_xlarge"
+    android:paddingTop="@dimen/space_normal"
+    android:paddingRight="@dimen/space_xlarge"
+    android:paddingBottom="@dimen/space_normal">
 
     <EditText
         android:id="@+id/vhmsr_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/searchBackground"
-        android:padding="@dimen/space_normal"
-        android:textColor="@android:color/white"
-        android:hint="Query..." />
+        android:hint="@string/main_item_query_hint"
+        android:inputType="text" />
 
 </FrameLayout>

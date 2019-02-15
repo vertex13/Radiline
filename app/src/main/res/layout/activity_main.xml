@@ -45,6 +45,7 @@
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/secondary"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -54,7 +55,7 @@
             android:layout_margin="@dimen/fab_margin"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
-            app:srcCompat="@android:drawable/ic_media_play" />
+            app:srcCompat="@drawable/ic_play_arrow_white_24dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -68,6 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="@color/bg_nav"
         app:menu="@menu/navigation_main" />
 
 </LinearLayout>

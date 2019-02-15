@@ -4,58 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/space_normal"
+    android:paddingLeft="@dimen/space_xlarge"
     android:paddingTop="@dimen/space_small"
-    android:paddingRight="@dimen/space_normal"
+    android:paddingRight="@dimen/space_xlarge"
     android:paddingBottom="@dimen/space_small">
 
     <TextView
         android:id="@+id/vhmst_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/stationBackground"
-        android:paddingLeft="@dimen/space_normal"
-        android:paddingTop="@dimen/space_normal"
-        android:paddingRight="@dimen/space_normal"
-        android:paddingBottom="@dimen/space_small"
+        android:textSize="@dimen/text_large"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Station" />
 
     <TextView
         android:id="@+id/vhmst_listeners_label"
+        style="@style/TextInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_xsmall"
-        android:layout_marginRight="@dimen/space_xsmall"
-        android:text="Listeners"
-        app:layout_constraintRight_toLeftOf="@id/vhmst_listeners"
+        android:text="@string/main_item_listeners"
+        app:layout_constraintLeft_toLeftOf="@id/vhmst_name"
         app:layout_constraintTop_toBottomOf="@id/vhmst_name" />
 
     <TextView
         android:id="@+id/vhmst_listeners"
+        style="@style/TextInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_normal"
-        android:layout_marginRight="@dimen/space_normal"
-        app:layout_constraintRight_toLeftOf="@id/vhmst_bitrate_label"
+        android:layout_marginStart="@dimen/space_xxsmall"
+        android:layout_marginLeft="@dimen/space_xxsmall"
+        app:layout_constraintLeft_toRightOf="@id/vhmst_listeners_label"
         app:layout_constraintTop_toBottomOf="@id/vhmst_name"
         tools:text="2949" />
 
     <TextView
         android:id="@+id/vhmst_bitrate_label"
+        style="@style/TextInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/space_xsmall"
-        android:layout_marginRight="@dimen/space_xsmall"
-        android:text="Bitrate"
-        app:layout_constraintRight_toLeftOf="@id/vhmst_bitrate"
+        android:layout_marginStart="@dimen/space_normal"
+        android:layout_marginLeft="@dimen/space_normal"
+        android:text="@string/main_item_bitrate"
+        app:layout_constraintLeft_toRightOf="@id/vhmst_listeners"
         app:layout_constraintTop_toBottomOf="@id/vhmst_name" />
 
     <TextView
         android:id="@+id/vhmst_bitrate"
+        style="@style/TextInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="@dimen/space_xxsmall"
+        android:layout_marginLeft="@dimen/space_xxsmall"
+        app:layout_constraintLeft_toRightOf="@id/vhmst_bitrate_label"
         app:layout_constraintTop_toBottomOf="@id/vhmst_name"
         tools:text="128" />
 

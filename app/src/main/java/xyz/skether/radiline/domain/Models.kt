@@ -3,6 +3,8 @@ package xyz.skether.radiline.domain
 class Station(
     val id: Int,
     val name: String,
+    val listeners: Int = 1234,
+    val bitrate: Int = 128,
     val genre: Genre? = null
 )
 

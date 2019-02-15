@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="primary">#6C5B7B</color>
+    <color name="primaryDark">#5E4F6B</color>
+    <color name="secondary">#F7DACF</color>
+    <color name="secondaryDark">#C06C84</color>
+    <color name="accent">#F67280</color>
 
-    <color name="genreBackground">#75B1C0</color>
-    <color name="stationBackground">#DCE6D8</color>
-    <color name="searchBackground">#65AAE4</color>
+    <color name="black_8p">#14000000</color>
+    <color name="bg_nav">#EFF2E2</color>
 
 </resources>
