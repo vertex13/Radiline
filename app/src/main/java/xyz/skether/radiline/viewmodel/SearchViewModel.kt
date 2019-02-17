@@ -9,14 +9,21 @@ import xyz.skether.radiline.domain.Station
 
 class SearchViewModel : BaseViewModel() {
 
+    private val minQueryLength = 3
+
     private val _stations = MutableLiveData<List<Station>>()
 
     val stations: LiveData<List<Station>>
         get() = _stations
 
     fun search(query: String) {
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.length < minQueryLength) {
+            return
+        }
+
         launch(Dispatchers.Default) {
-            _stations.postValue(mockStations(query))
+            _stations.postValue(mockStations(trimmedQuery))
         }
     }
 

@@ -27,7 +27,7 @@ class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
         when (item) {
             is SearchMainItem -> {
                 holder as SearchMainVH
-                holder.init(item, this::onQuery)
+                holder.init(item, this::onQueryChanged)
             }
             is StationMainItem -> {
                 holder as StationMainVH
@@ -41,17 +41,18 @@ class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
     override fun getItemViewType(position: Int): Int = getItem(position).type.ordinal
 
     fun updateData(stations: List<Station>) {
-        val searchItem = items.first() as SearchMainItem
-        items.clear()
-        items.add(searchItem)
+        val oldSize = items.size
+        items.subList(1, oldSize).clear()
+        notifyItemRangeRemoved(1, oldSize.dec())
+
         items.addAll(stations.map { StationMainItem(it) })
-        notifyDataSetChanged()
+        notifyItemRangeInserted(1, items.size.dec())
     }
 
     private fun getItem(position: Int): MainItem = items[position]
 
-    private fun onQuery(query: String) {
-        callback.onQuery(query)
+    private fun onQueryChanged(query: String) {
+        callback.onQueryChanged(query)
     }
 
     private fun onStationClicked(item: StationMainItem) {
@@ -60,7 +61,7 @@ class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
 
     interface Callback {
 
-        fun onQuery(query: String)
+        fun onQueryChanged(query: String)
 
         fun onStationSelected(station: Station)
 

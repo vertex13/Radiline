@@ -1,6 +1,8 @@
 package xyz.skether.radiline.ui.base
 
+import android.content.Context
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
 
@@ -10,4 +12,9 @@ fun showSnackbar(view: View, textId: Int, length: Int = Snackbar.LENGTH_LONG) {
 
 fun showSnackbar(view: View, @StringRes text: String, length: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(view, text, length).show()
+}
+
+fun hideKeyboard(focusedView: View) {
+    val imm = focusedView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(focusedView.windowToken, 0)
 }

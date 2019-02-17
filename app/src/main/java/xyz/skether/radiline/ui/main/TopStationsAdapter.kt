@@ -20,9 +20,12 @@ class TopStationsAdapter(private val callback: Callback) : RecyclerView.Adapter<
     override fun getItemCount(): Int = items.size
 
     fun updateData(stations: List<Station>) {
+        val oldSize = items.size
         items.clear()
+        notifyItemRangeRemoved(0, oldSize)
+
         items.addAll(stations.map { StationMainItem(it) })
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, items.size)
     }
 
     private fun getItem(position: Int): StationMainItem = items[position]

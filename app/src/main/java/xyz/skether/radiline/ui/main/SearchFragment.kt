@@ -31,7 +31,7 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
         }
     }
 
-    override fun onQuery(query: String) {
+    override fun onQueryChanged(query: String) {
         searchViewModel.search(query)
     }
 
