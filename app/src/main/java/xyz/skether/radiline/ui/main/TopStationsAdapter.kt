@@ -5,9 +5,9 @@ import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
 
-class TopStationsAdapter(private val stations: List<Station>): RecyclerView.Adapter<StationMainVH>() {
+class TopStationsAdapter(private val callback: Callback) : RecyclerView.Adapter<StationMainVH>() {
 
-    private val items: List<StationMainItem> = stations.map { StationMainItem(it) }
+    private val items = mutableListOf<StationMainItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationMainVH {
         return newViewHolder(parent)
@@ -19,10 +19,22 @@ class TopStationsAdapter(private val stations: List<Station>): RecyclerView.Adap
 
     override fun getItemCount(): Int = items.size
 
-    fun getItem(position: Int): StationMainItem = items[position]
+    fun updateData(stations: List<Station>) {
+        items.clear()
+        items.addAll(stations.map { StationMainItem(it) })
+        notifyDataSetChanged()
+    }
+
+    private fun getItem(position: Int): StationMainItem = items[position]
 
     private fun onStationClicked(item: StationMainItem) {
-        // todo play the station
+        callback.onStationSelected(item.station)
+    }
+
+    interface Callback {
+
+        fun onStationSelected(station: Station)
+
     }
 
 }

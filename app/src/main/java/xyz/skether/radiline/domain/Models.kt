@@ -16,4 +16,5 @@ class Genre(
 ) {
     var subGenres: MutableList<Genre>? = null
     var stations: MutableList<Station>? = null
+    var areAllStationsLoaded: Boolean = false
 }

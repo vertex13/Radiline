@@ -3,16 +3,13 @@ package xyz.skether.radiline.ui.main
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Genre
+import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
 
-class GenresAdapter(private val genres: List<Genre>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class GenresAdapter(private val callback: Callback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items = mutableListOf<MainItem>()
     private val expandedGenres = mutableListOf<GenreMainItem>()
-
-    init {
-        items.addAll(buildItemList())
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val holderType = MainItem.Type.values()[viewType]
@@ -41,10 +38,17 @@ class GenresAdapter(private val genres: List<Genre>) : RecyclerView.Adapter<Recy
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.ordinal
 
-    fun getItem(position: Int) = items[position]
+    fun updateData(genres: List<Genre>) {
+        val newItems = buildItemList(rootGenres = genres)
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    private fun getItem(position: Int) = items[position]
 
     private fun onStationClicked(stationItem: StationMainItem) {
-        // todo play the station
+        callback.onStationSelected(stationItem.station)
     }
 
     private fun onGenreClicked(item: GenreMainItem) {
@@ -91,16 +95,17 @@ class GenresAdapter(private val genres: List<Genre>) : RecyclerView.Adapter<Recy
 
     private fun buildItemList(
         subLevel: Int = 0,
-        expandedGenre: Genre? = null
+        expandedGenre: Genre? = null,
+        rootGenres: List<Genre>? = null
     ): List<MainItem> {
         val newItems = mutableListOf<MainItem>()
 
         val subGenres = when {
-            expandedGenre == null -> genres
+            expandedGenre == null -> rootGenres!!
             expandedGenre.hasSubGenres -> when {
                 expandedGenre.subGenres != null -> expandedGenre.subGenres!!
                 else -> {
-                    // todo load sub genres
+                    callback.onLoadSubGenres(expandedGenre)
                     emptyList()
                 }
             }
@@ -119,11 +124,21 @@ class GenresAdapter(private val genres: List<Genre>) : RecyclerView.Adapter<Recy
             if (expandedGenre.stations != null) {
                 newItems.addAll(expandedGenre.stations!!.map { StationMainItem(it, subLevel) })
             } else {
-                // todo load stations
+                callback.onLoadStations(expandedGenre)
             }
         }
 
         return newItems
+    }
+
+    interface Callback {
+
+        fun onStationSelected(station: Station)
+
+        fun onLoadSubGenres(genre: Genre)
+
+        fun onLoadStations(genre: Genre)
+
     }
 
 }

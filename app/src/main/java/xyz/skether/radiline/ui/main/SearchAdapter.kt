@@ -5,13 +5,12 @@ import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
 
-class SearchAdapter(private val stations: List<Station>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items = mutableListOf<MainItem>()
 
     init {
         items.add(SearchMainItem())
-        items.addAll(stations.map { StationMainItem(it) })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -41,14 +40,30 @@ class SearchAdapter(private val stations: List<Station>) : RecyclerView.Adapter<
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.ordinal
 
-    fun getItem(position: Int): MainItem = items[position]
-
-    private fun onQuery(query: String) {
-        // todo
+    fun updateData(stations: List<Station>) {
+        val searchItem = items.first() as SearchMainItem
+        items.clear()
+        items.add(searchItem)
+        items.addAll(stations.map { StationMainItem(it) })
+        notifyDataSetChanged()
     }
 
-    private fun onStationClicked(stationItem: StationMainItem) {
-        // todo play the station
+    private fun getItem(position: Int): MainItem = items[position]
+
+    private fun onQuery(query: String) {
+        callback.onQuery(query)
+    }
+
+    private fun onStationClicked(item: StationMainItem) {
+        callback.onStationSelected(item.station)
+    }
+
+    interface Callback {
+
+        fun onQuery(query: String)
+
+        fun onStationSelected(station: Station)
+
     }
 
 }
