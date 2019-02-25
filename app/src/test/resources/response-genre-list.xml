@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Ok</statusText>
+    <data>
+        <genrelist>
+            <genre name="Acoustic Blues" count="3701" haschildren="false" id="25" parentid="24" />
+            <genre name="Cajun and Zydeco" count="12" haschildren="false" id="31" parentid="24" />
+            <genre name="Chicago Blues" count="1" haschildren="false" id="26" parentid="24" />
+            <genre name="Contemporary Blues" count="3" haschildren="false" id="27" parentid="24" />
+        </genrelist>
+    </data>
+</response>
