@@ -26,6 +26,13 @@ sealed class ShoutcastApiRouting : FuelRouting {
         override val offset: Int
     ) : ShoutcastApiRouting(), Paginated
 
+    class GetStationsByGenreId(
+        val genreId: Int,
+        override val limit: Int,
+        override val offset: Int,
+        val responseFormat: ResponseFormat
+    ) : ShoutcastApiRouting(), Paginated
+
     class GetPrimaryGenres(
         val responseFormat: ResponseFormat
     ) : ShoutcastApiRouting()
@@ -44,6 +51,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
         get() = when (this) {
             is GetTopStations -> defaultParamsWith()
             is SearchStations -> defaultParamsWith("search" to query)
+            is GetStationsByGenreId -> defaultParamsWith("genre_id" to genreId, "f" to responseFormat)
             is GetPrimaryGenres -> defaultParamsWith("f" to responseFormat)
             is GetSecondaryGenres -> defaultParamsWith("parentid" to parentGenreId, "f" to responseFormat)
         }
@@ -52,6 +60,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
         get() = when (this) {
             is GetTopStations -> "legacy/Top500"
             is SearchStations -> "legacy/stationsearch"
+            is GetStationsByGenreId -> "station/advancedsearch"
             is GetPrimaryGenres -> "genre/primary"
             is GetSecondaryGenres -> "genre/secondary"
         }

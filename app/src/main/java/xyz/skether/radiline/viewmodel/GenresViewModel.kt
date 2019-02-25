@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.skether.radiline.domain.Genre
 import xyz.skether.radiline.domain.GenresManager
+import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
 import javax.inject.Inject
 
@@ -13,6 +14,8 @@ class GenresViewModel : BaseViewModel() {
 
     @Inject
     lateinit var genresManager: GenresManager
+    @Inject
+    lateinit var stationManager: StationsManager
 
     private val _genres: MutableLiveData<List<Genre>> by lazy {
         MutableLiveData<List<Genre>>().also {
@@ -42,7 +45,14 @@ class GenresViewModel : BaseViewModel() {
         if (genre.areAllStationsLoaded) {
             return
         }
-        // todo
+        launch(Dispatchers.Default) {
+            val stations = stationManager.getStationsByGenreId(genre.id)
+            if (genre.stations == null) {
+                genre.stations = mutableListOf()
+            }
+            genre.stations!!.addAll(stations)
+            _genres.postValue(_genres.value)
+        }
     }
 
     private fun loadGenres() {

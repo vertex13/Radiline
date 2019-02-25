@@ -8,11 +8,16 @@ class ShoutcastApiImpl : ShoutcastApi {
 
     override suspend fun getTopStations(limit: Int, offset: Int): StationListResponse {
         return Fuel.request(ShoutcastApiRouting.GetTopStations(limit, offset))
-            .await(StationListResponse.Deserializer)
+            .await(StationListResponse.LegacyDeserializer)
     }
 
     override suspend fun searchStations(query: String, limit: Int, offset: Int): StationListResponse {
         return Fuel.request(ShoutcastApiRouting.SearchStations(query, limit, offset))
+            .await(StationListResponse.LegacyDeserializer)
+    }
+
+    override suspend fun getStationsByGenreId(genreId: Int, limit: Int, offset: Int): StationListResponse {
+        return Fuel.request(ShoutcastApiRouting.GetStationsByGenreId(genreId, limit, offset, XML))
             .await(StationListResponse.Deserializer)
     }
 

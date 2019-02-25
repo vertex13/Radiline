@@ -13,6 +13,11 @@ interface ShoutcastApi {
     suspend fun searchStations(query: String, limit: Int, offset: Int): StationListResponse
 
     /**
+     * Get stations by genre ID.
+     */
+    suspend fun getStationsByGenreId(genreId: Int, limit: Int, offset: Int): StationListResponse
+
+    /**
      * Get primary genres.
      */
     suspend fun getPrimaryGenres(): GenreListResponse

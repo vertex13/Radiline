@@ -12,28 +12,41 @@ data class StationListResponse(
     val stations: List<StationResponse>
 ) {
 
+    object LegacyDeserializer : ResponseDeserializable<StationListResponse> {
+        override fun deserialize(inputStream: InputStream): StationListResponse {
+            val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
+            val rootElement = doc.firstChild as Element
+            return stationListFromElement(rootElement)
+        }
+    }
+
     object Deserializer : ResponseDeserializable<StationListResponse> {
         override fun deserialize(inputStream: InputStream): StationListResponse {
             val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
             val root = doc.firstChild as Element
-
-            val tuneIn = mutableMapOf<String, String>()
-            val tuneInAttrs = root.getElementsByTagName("tunein").item(0).attributes
-            for (i in 0 until tuneInAttrs.length) {
-                val node = tuneInAttrs.item(i)
-                tuneIn[node.nodeName] = node.nodeValue
-            }
-
-            val stations = mutableListOf<StationResponse>()
-            val stationNodes = root.getElementsByTagName("station")
-            for (i in 0 until stationNodes.length) {
-                stations.add(stationFromNode(stationNodes.item(i)))
-            }
-
-            return StationListResponse(tuneIn, stations)
+            val dataElement = root.getElementsByTagName("data").item(0) as Element
+            val stationListElement = dataElement.getElementsByTagName("stationlist").item(0) as Element
+            return stationListFromElement(stationListElement)
         }
     }
 
+}
+
+private fun stationListFromElement(dataElement: Element): StationListResponse {
+    val tuneIn = mutableMapOf<String, String>()
+    val tuneInAttrs = dataElement.getElementsByTagName("tunein").item(0).attributes
+    for (i in 0 until tuneInAttrs.length) {
+        val node = tuneInAttrs.item(i)
+        tuneIn[node.nodeName] = node.nodeValue
+    }
+
+    val stations = mutableListOf<StationResponse>()
+    val stationNodes = dataElement.getElementsByTagName("station")
+    for (i in 0 until stationNodes.length) {
+        stations.add(stationFromNode(stationNodes.item(i)))
+    }
+
+    return StationListResponse(tuneIn, stations)
 }
 
 data class StationResponse(
