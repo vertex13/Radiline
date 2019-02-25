@@ -27,8 +27,7 @@ data class StationListResponse(
             val stations = mutableListOf<StationResponse>()
             val stationNodes = root.getElementsByTagName("station")
             for (i in 0 until stationNodes.length) {
-                val node = stationNodes.item(i)
-                stations.add(stationFromNode(node))
+                stations.add(stationFromNode(stationNodes.item(i)))
             }
 
             return StationListResponse(tuneIn, stations)
@@ -62,6 +61,44 @@ private fun stationFromNode(node: Node): StationResponse {
     )
 }
 
-private fun NamedNodeMap.nodeValue(name: String) = getNamedItem(name).nodeValue
+data class GenreListResponse(
+    val genres: List<GenreResponse>
+) {
 
-private fun NamedNodeMap.nodeValueOpt(name: String) = getNamedItem(name)?.nodeValue
+    object Deserializer : ResponseDeserializable<GenreListResponse> {
+        override fun deserialize(inputStream: InputStream): GenreListResponse {
+            val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
+            val root = doc.firstChild as Element
+            val dataElement = root.getElementsByTagName("data").item(0) as Element
+            val genreListElement = dataElement.getElementsByTagName("genrelist").item(0) as Element
+
+            val genres = mutableListOf<GenreResponse>()
+            val genreNodes = genreListElement.getElementsByTagName("genre")
+            for (i in 0 until genreNodes.length) {
+                genres.add(genreFromNode(genreNodes.item(i)))
+            }
+
+            return GenreListResponse(genres)
+        }
+    }
+
+}
+
+data class GenreResponse(
+    val id: Int,
+    val name: String,
+    val hasChildren: Boolean
+)
+
+private fun genreFromNode(node: Node): GenreResponse {
+    val attrs = node.attributes
+    return GenreResponse(
+        id = attrs.nodeValue("id").toInt(),
+        name = attrs.nodeValue("name"),
+        hasChildren = attrs.nodeValue("haschildren").toBoolean()
+    )
+}
+
+private fun NamedNodeMap.nodeValue(name: String): String = getNamedItem(name).nodeValue
+
+private fun NamedNodeMap.nodeValueOpt(name: String): String? = getNamedItem(name)?.nodeValue

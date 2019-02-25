@@ -1,5 +1,6 @@
 package xyz.skether.radiline.domain
 
+import xyz.skether.radiline.data.shoutcast.GenreResponse
 import xyz.skether.radiline.data.shoutcast.StationResponse
 
 class Station(
@@ -27,5 +28,13 @@ fun stationFromResponse(resp: StationResponse): Station {
         name = resp.name,
         listeners = resp.numberListeners,
         bitrate = resp.bitRate
+    )
+}
+
+fun genreFromResponse(resp: GenreResponse): Genre {
+    return Genre(
+        id = resp.id,
+        name = resp.name,
+        hasSubGenres = resp.hasChildren
     )
 }

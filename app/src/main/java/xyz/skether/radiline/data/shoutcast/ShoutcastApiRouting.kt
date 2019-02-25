@@ -8,6 +8,8 @@ import xyz.skether.radiline.BuildConfig
 
 sealed class ShoutcastApiRouting : FuelRouting {
 
+    enum class ResponseFormat { XML, JSON, RSS }
+
     interface Paginated {
         val limit: Int
         val offset: Int
@@ -24,6 +26,10 @@ sealed class ShoutcastApiRouting : FuelRouting {
         override val offset: Int
     ) : ShoutcastApiRouting(), Paginated
 
+    class GetPrimaryGenres(
+        val responseFormat: ResponseFormat
+    ) : ShoutcastApiRouting()
+
     override val basePath: String = "http://api.shoutcast.com"
     private val keyParam = "k" to BuildConfig.ShoutcastDevId
 
@@ -33,12 +39,14 @@ sealed class ShoutcastApiRouting : FuelRouting {
         get() = when (this) {
             is GetTopStations -> defaultParamsWith()
             is SearchStations -> defaultParamsWith("search" to query)
+            is GetPrimaryGenres -> defaultParamsWith("f" to responseFormat)
         }
 
     override val path: String
         get() = when (this) {
             is GetTopStations -> "legacy/Top500"
             is SearchStations -> "legacy/stationsearch"
+            is GetPrimaryGenres -> "genre/primary"
         }
 
     override val body: String? = null

@@ -15,4 +15,9 @@ class ShoutcastApiImpl : ShoutcastApi {
             .await(StationListResponse.Deserializer)
     }
 
+    override suspend fun getPrimaryGenres(): GenreListResponse {
+        return Fuel.request(ShoutcastApiRouting.GetPrimaryGenres(ShoutcastApiRouting.ResponseFormat.XML))
+            .await(GenreListResponse.Deserializer)
+    }
+
 }
