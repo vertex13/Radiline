@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stationlist>
+    <tunein
+        base="/sbin/tunein-station.pls"
+        base-m3u="/sbin/tunein-station.m3u"
+        base-xspf="/sbin/tunein-station.xspf" />
+    <station
+        name="Hitradio OE3"
+        br="192"
+        ct="HITRADIO Ö3 - Livestream"
+        genre="00s"
+        genre2="80s"
+        genre3="90s"
+        id="1826116"
+        lc="33506"
+        logo="https://i3.radionomy.com/radios/200/6/6f2c/6f2ca76b-4d1d-464d-a336-db0913fb5229.jpg"
+        mt="audio/mpeg" />
+    <station
+        name="COOLfahrenheit 93 - (7)"
+        br="64"
+        ct="-5B!1H2'L - @+8@42'2!@+2"
+        genre="Easy Listening"
+        genre2="Pop"
+        id="1735956"
+        lc="11815"
+        logo="http://i.radionomy.com/document/radios/a/a265/a2654f5f-669e-4b9e-ac13-962971886ad2.jpg"
+        mt="audio/aacp" />
+    <station
+        name="COOLfahrenheit 93 -- (6)"
+        br="64"
+        ct="The TOYS - STARS"
+        genre="Easy Listening"
+        genre2="Pop"
+        id="1794490"
+        lc="9430"
+        logo="http://i.radionomy.com/document/radios/7/7c48/7c48c133-a1ee-42e6-97fa-6420420e8cad.jpg"
+        mt="audio/aacp" />
+</stationlist>

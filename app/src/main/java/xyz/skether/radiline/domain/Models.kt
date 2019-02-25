@@ -1,5 +1,7 @@
 package xyz.skether.radiline.domain
 
+import xyz.skether.radiline.data.shoutcast.StationResponse
+
 class Station(
     val id: Int,
     val name: String,
@@ -17,4 +19,13 @@ class Genre(
     var subGenres: MutableList<Genre>? = null
     var stations: MutableList<Station>? = null
     var areAllStationsLoaded: Boolean = false
+}
+
+fun stationFromResponse(resp: StationResponse): Station {
+    return Station(
+        id = resp.id,
+        name = resp.name,
+        listeners = resp.numberListeners,
+        bitrate = resp.bitRate
+    )
 }
