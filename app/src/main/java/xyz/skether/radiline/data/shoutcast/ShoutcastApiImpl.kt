@@ -2,6 +2,7 @@ package xyz.skether.radiline.data.shoutcast
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.await
+import xyz.skether.radiline.data.shoutcast.ShoutcastApiRouting.ResponseFormat.XML
 
 class ShoutcastApiImpl : ShoutcastApi {
 
@@ -16,7 +17,12 @@ class ShoutcastApiImpl : ShoutcastApi {
     }
 
     override suspend fun getPrimaryGenres(): GenreListResponse {
-        return Fuel.request(ShoutcastApiRouting.GetPrimaryGenres(ShoutcastApiRouting.ResponseFormat.XML))
+        return Fuel.request(ShoutcastApiRouting.GetPrimaryGenres(XML))
+            .await(GenreListResponse.Deserializer)
+    }
+
+    override suspend fun getSecondaryGenres(parentGenreId: Int): GenreListResponse {
+        return Fuel.request(ShoutcastApiRouting.GetSecondaryGenres(parentGenreId, XML))
             .await(GenreListResponse.Deserializer)
     }
 

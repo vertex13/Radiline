@@ -31,7 +31,11 @@ class GenresViewModel : BaseViewModel() {
         if (!genre.hasSubGenres || genre.subGenres != null) {
             return
         }
-        // todo
+        launch(Dispatchers.Default) {
+            val subGenres = genresManager.getGenres(genre.id)
+            genre.subGenres = ArrayList(subGenres)
+            _genres.postValue(_genres.value)
+        }
     }
 
     fun loadStations(genre: Genre) {
@@ -43,7 +47,7 @@ class GenresViewModel : BaseViewModel() {
 
     private fun loadGenres() {
         launch(Dispatchers.Default) {
-            _genres.postValue(genresManager.getPrimaryGenres())
+            _genres.postValue(genresManager.getGenres())
         }
     }
 

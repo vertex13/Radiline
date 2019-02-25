@@ -30,6 +30,11 @@ sealed class ShoutcastApiRouting : FuelRouting {
         val responseFormat: ResponseFormat
     ) : ShoutcastApiRouting()
 
+    class GetSecondaryGenres(
+        val parentGenreId: Int,
+        val responseFormat: ResponseFormat
+    ) : ShoutcastApiRouting()
+
     override val basePath: String = "http://api.shoutcast.com"
     private val keyParam = "k" to BuildConfig.ShoutcastDevId
 
@@ -40,6 +45,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
             is GetTopStations -> defaultParamsWith()
             is SearchStations -> defaultParamsWith("search" to query)
             is GetPrimaryGenres -> defaultParamsWith("f" to responseFormat)
+            is GetSecondaryGenres -> defaultParamsWith("parentid" to parentGenreId, "f" to responseFormat)
         }
 
     override val path: String
@@ -47,6 +53,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
             is GetTopStations -> "legacy/Top500"
             is SearchStations -> "legacy/stationsearch"
             is GetPrimaryGenres -> "genre/primary"
+            is GetSecondaryGenres -> "genre/secondary"
         }
 
     override val body: String? = null

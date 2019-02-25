@@ -17,4 +17,9 @@ interface ShoutcastApi {
      */
     suspend fun getPrimaryGenres(): GenreListResponse
 
+    /**
+     * Get secondary genres.
+     */
+    suspend fun getSecondaryGenres(parentGenreId: Int): GenreListResponse
+
 }
