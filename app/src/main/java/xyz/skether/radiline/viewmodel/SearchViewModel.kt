@@ -3,37 +3,41 @@ package xyz.skether.radiline.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import xyz.skether.radiline.domain.Station
+import xyz.skether.radiline.domain.StationsManager
+import xyz.skether.radiline.domain.di.Injector
+import javax.inject.Inject
 
 class SearchViewModel : BaseViewModel() {
 
-    private val minQueryLength = 3
+    private companion object Config {
+        const val MIN_QUERY_LENGTH = 3
+    }
 
-    private val _stations = MutableLiveData<List<Station>>()
+    @Inject
+    lateinit var stationsManager: StationsManager
+
+    private val _stations: MutableLiveData<List<Station>> by lazy {
+        MutableLiveData<List<Station>>()
+    }
 
     val stations: LiveData<List<Station>>
         get() = _stations
 
+    init {
+        Injector.appComponent.inject(this)
+    }
+
     fun search(query: String) {
         val trimmedQuery = query.trim()
-        if (trimmedQuery.length < minQueryLength) {
+        if (trimmedQuery.length < MIN_QUERY_LENGTH) {
             return
         }
 
         launch(Dispatchers.Default) {
-            _stations.postValue(mockStations(trimmedQuery))
+            _stations.postValue(stationsManager.searchStations(query))
         }
-    }
-
-    private suspend fun mockStations(query: String): List<Station> {
-        delay(1000)
-        val stationList = mutableListOf<Station>()
-        for (i in 1..10) {
-            stationList.add(Station(i, "$query station #$i"))
-        }
-        return stationList
     }
 
 }
