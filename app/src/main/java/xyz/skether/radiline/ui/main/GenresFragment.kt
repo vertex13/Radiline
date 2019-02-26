@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_base_main.*
 import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.Genre
@@ -28,6 +29,8 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
             val lm = LinearLayoutManager(context)
             layoutManager = lm
             addItemDecoration(DividerItemDecoration(context, lm.orientation))
+            clearOnScrollListeners()
+            addOnScrollListener(OnScrollListener())
             adapter = this@GenresFragment.adapter
         }
     }
@@ -42,6 +45,31 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
 
     override fun onLoadStations(genre: Genre) {
         genresViewModel.loadStations(genre)
+    }
+
+    private inner class OnScrollListener : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            val lm = recyclerView.layoutManager!! as LinearLayoutManager
+            if (lm.childCount < 2) {
+                return
+            }
+
+            val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+            val lastItem = adapter.getItem(lastVisibleItemPosition)
+            val preLastItem = adapter.getItem(lastVisibleItemPosition.dec())
+
+            if (lastItem is GenreMainItem && preLastItem is StationMainItem) {
+                val genre = preLastItem.station.genre!!
+                if (!genre.areAllStationsLoaded) {
+                    onLoadStations(genre)
+                }
+            } else if (adapter.itemCount == lastVisibleItemPosition.inc() && lastItem is StationMainItem) {
+                val genre = lastItem.station.genre!!
+                if (!genre.areAllStationsLoaded) {
+                    onLoadStations(genre)
+                }
+            }
+        }
     }
 
 }

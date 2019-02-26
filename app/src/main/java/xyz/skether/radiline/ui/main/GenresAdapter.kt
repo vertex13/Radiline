@@ -45,7 +45,7 @@ class GenresAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
         notifyDataSetChanged()
     }
 
-    private fun getItem(position: Int) = items[position]
+    fun getItem(position: Int) = items[position]
 
     private fun onStationClicked(stationItem: StationMainItem) {
         callback.onStationSelected(stationItem.station)
