@@ -9,6 +9,7 @@ import xyz.skether.radiline.domain.Genre
 import xyz.skether.radiline.domain.GenresManager
 import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
+import xyz.skether.radiline.notify
 import javax.inject.Inject
 
 class GenresViewModel : BaseViewModel() {
@@ -52,7 +53,7 @@ class GenresViewModel : BaseViewModel() {
                 subGenre.parent = genre
                 genre.subGenres!!.add(subGenre)
             }
-            _genres.value = _genres.value
+            _genres.notify()
             currentTasks.remove(key)
         }
     }
@@ -78,7 +79,7 @@ class GenresViewModel : BaseViewModel() {
                 station.genre = genre
                 genre.stations!!.add(station)
             }
-            _genres.value = _genres.value
+            _genres.notify()
             currentTasks.remove(key)
         }
     }

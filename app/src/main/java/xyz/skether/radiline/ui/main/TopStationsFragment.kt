@@ -11,10 +11,15 @@ import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.BaseFragment
 import xyz.skether.radiline.ui.base.LayoutId
+import xyz.skether.radiline.ui.base.OnLastItemScrollListener
 import xyz.skether.radiline.viewmodel.TopStationsViewModel
 
 @LayoutId(R.layout.fragment_base_main)
 class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
+
+    private companion object Config {
+        const val NUM_LAST_ITEMS = 3
+    }
 
     private lateinit var topStationsViewModel: TopStationsViewModel
     private val adapter = TopStationsAdapter(this)
@@ -27,6 +32,8 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
             val lm = LinearLayoutManager(context)
             layoutManager = lm
             addItemDecoration(DividerItemDecoration(context, lm.orientation))
+            clearOnScrollListeners()
+            addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS, topStationsViewModel::loadTopStations))
             adapter = this@TopStationsFragment.adapter
         }
     }
