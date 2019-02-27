@@ -3,7 +3,7 @@ package xyz.skether.radiline.domain
 import xyz.skether.radiline.data.shoutcast.GenreResponse
 import xyz.skether.radiline.data.shoutcast.StationResponse
 
-class Station(
+data class Station(
     val id: Int,
     val name: String,
     val listeners: Int = 1234,
@@ -12,7 +12,7 @@ class Station(
     var genre: Genre? = null
 }
 
-class Genre(
+data class Genre(
     val id: Int,
     val name: String,
     val hasSubGenres: Boolean

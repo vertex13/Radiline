@@ -51,7 +51,7 @@ class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
         for (i in 0 until inconsistencyPos) {
             val item = stationItems[i] as StationMainItem
             val station = updatedStations[i]
-            if (item.station.id != station.id) {
+            if (item.station != station) {
                 inconsistencyPos = i
                 break
             }

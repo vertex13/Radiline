@@ -17,16 +17,11 @@ import xyz.skether.radiline.ui.base.hideKeyboard
 class StationMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
     fun init(item: StationMainItem, onClickListener: (StationMainItem) -> Unit) {
-        val bgColorId = if (item.subLevel == 0) 0 else R.color.black_8p
-        itemView.setBackgroundResource(bgColorId)
         itemView.setOnClickListener { onClickListener(item) }
 
-        val leftPadding = itemView.resources.getDimensionPixelSize(R.dimen.space_normal) * item.subLevel
         itemView.vhmst_name.apply {
             text = item.station.name
-            setPadding(leftPadding, 0, 0, 0)
         }
-        itemView.vhmst_listeners_label.setPadding(leftPadding, 0, 0, 0)
         itemView.vhmst_listeners.text = item.station.listeners.toString()
         itemView.vhmst_bitrate.text = item.station.bitrate.toString()
     }
@@ -37,11 +32,9 @@ class StationMainVH(view: View) : RecyclerView.ViewHolder(view) {
 class GenreMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
     fun init(item: GenreMainItem, onClickListener: (GenreMainItem) -> Unit) {
-        val leftPadding = itemView.resources.getDimensionPixelSize(R.dimen.space_normal) * item.subLevel
         itemView.setOnClickListener { onClickListener(item) }
         itemView.vhmg_name.apply {
             text = item.genre.name
-            setPadding(leftPadding, 0, 0, 0)
         }
     }
 

@@ -25,7 +25,7 @@ class TopStationsAdapter(private val callback: Callback) : RecyclerView.Adapter<
         for (i in 0 until inconsistencyPos) {
             val item = items[i]
             val station = updatedStations[i]
-            if (item.station.id != station.id) {
+            if (item.station != station) {
                 inconsistencyPos = i
                 break
             }

@@ -23,7 +23,19 @@ class MainActivity : BaseActivity() {
         }
 
         navigation.setOnNavigationItemSelectedListener(this::onNavigationItemSelected)
-        navigation.selectedItemId = navigation.selectedItemId
+        if (savedInstanceState == null) {
+            navigation.selectedItemId = navigation.selectedItemId
+        }
+    }
+
+    override fun onBackPressed() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        if (currentFragment == null
+            || currentFragment !is GenresFragment
+            || !currentFragment.closeGenre()
+        ) {
+            super.onBackPressed()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

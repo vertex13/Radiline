@@ -5,11 +5,11 @@ import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Genre
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
+import kotlin.math.min
 
 class GenresAdapter(private val callback: Callback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items = mutableListOf<MainItem>()
-    private val expandedGenres = mutableListOf<GenreMainItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val holderType = MainItem.Type.values()[viewType]
@@ -38,106 +38,56 @@ class GenresAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.ordinal
 
-    fun updateData(genres: List<Genre>) {
-        val newItems = buildItemList(rootGenres = genres)
+    fun setData(newItems: List<MainItem>) {
+        val oldSize = items.size
         items.clear()
+        notifyItemRangeRemoved(0, oldSize)
         items.addAll(newItems)
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, newItems.size)
     }
 
-    fun getItem(position: Int) = items[position]
+    fun updateData(updatedItems: List<MainItem>) {
+        var inconsistencyPos = min(items.size, updatedItems.size)
+        for (i in 0 until inconsistencyPos) {
+            val item = items[i]
+            val updatedItem = updatedItems[i]
+            if (item != updatedItem) {
+                inconsistencyPos = i
+                break
+            }
+        }
 
-    private fun onStationClicked(stationItem: StationMainItem) {
-        callback.onStationSelected(stationItem.station)
+        if (inconsistencyPos < items.size) {
+            // Remove old items.
+            val itemsToRemove = items.subList(inconsistencyPos, items.size)
+            val itemsToRemoveSize = itemsToRemove.size
+            itemsToRemove.clear()
+            notifyItemRangeRemoved(inconsistencyPos, itemsToRemoveSize)
+        }
+
+        if (inconsistencyPos < updatedItems.size) {
+            // Insert new items.
+            val newItems = updatedItems.subList(inconsistencyPos, updatedItems.size)
+            items.addAll(newItems)
+            notifyItemRangeInserted(inconsistencyPos, newItems.size)
+        }
+    }
+
+    private fun getItem(position: Int) = items[position]
+
+    private fun onStationClicked(item: StationMainItem) {
+        callback.onStationSelected(item.station)
     }
 
     private fun onGenreClicked(item: GenreMainItem) {
-        if (isGenreExpanded(item)) {
-            closeGenre(item)
-        } else {
-            openGenre(item)
-        }
-    }
-
-    private fun isGenreExpanded(genreItem: GenreMainItem): Boolean {
-        return expandedGenres.find { sameGenreItem(it, genreItem) } != null
-    }
-
-    private fun sameGenreItem(item1: GenreMainItem, item2: GenreMainItem): Boolean {
-        return item1.genre.id == item2.genre.id
-    }
-
-    private fun openGenre(item: GenreMainItem) {
-        if (expandedGenres.size > item.subLevel) {
-            closeGenre(expandedGenres[item.subLevel])
-        }
-
-        expandedGenres.add(item)
-        val insertedItems = buildItemList(item.subLevel.inc(), item.genre)
-        val insertFrom = items.indexOf(item).inc()
-
-        items.addAll(insertFrom, insertedItems)
-        notifyItemRangeInserted(insertFrom, insertedItems.size)
-    }
-
-    private fun closeGenre(item: GenreMainItem) {
-        var numClosedItems = 0
-        for (i in item.subLevel until expandedGenres.size) {
-            numClosedItems += expandedGenres[i].innerItemsSize()
-        }
-        val closeFrom = items.indexOf(item).inc()
-        val closeTo = closeFrom + numClosedItems
-
-        expandedGenres.subList(item.subLevel, expandedGenres.size).clear()
-        items.subList(closeFrom, closeTo).clear()
-        notifyItemRangeRemoved(closeFrom, numClosedItems)
-    }
-
-    private fun buildItemList(
-        subLevel: Int = 0,
-        expandedGenre: Genre? = null,
-        rootGenres: List<Genre>? = null
-    ): List<MainItem> {
-        val newItems = mutableListOf<MainItem>()
-
-        val subGenres = when {
-            expandedGenre == null -> rootGenres!!
-            expandedGenre.hasSubGenres -> when {
-                expandedGenre.subGenres != null -> expandedGenre.subGenres!!
-                else -> {
-                    callback.onLoadSubGenres(expandedGenre)
-                    emptyList()
-                }
-            }
-            else -> emptyList()
-        }
-
-        val hasExpanded = expandedGenres.size > subLevel
-        for (genre in subGenres) {
-            newItems.add(GenreMainItem(genre, subLevel))
-            if (hasExpanded && genre.id == expandedGenres[subLevel].genre.id) {
-                newItems.addAll(buildItemList(subLevel.inc(), genre))
-            }
-        }
-
-        if (expandedGenre != null) {
-            if (expandedGenre.stations != null) {
-                newItems.addAll(expandedGenre.stations!!.map { StationMainItem(it, subLevel) })
-            } else {
-                callback.onLoadStations(expandedGenre)
-            }
-        }
-
-        return newItems
+        callback.onGenreSelected(item.genre)
     }
 
     interface Callback {
 
+        fun onGenreSelected(genre: Genre)
+
         fun onStationSelected(station: Station)
-
-        fun onLoadSubGenres(genre: Genre)
-
-        fun onLoadStations(genre: Genre)
 
     }
 
