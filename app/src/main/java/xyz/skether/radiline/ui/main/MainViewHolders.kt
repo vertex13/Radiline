@@ -56,6 +56,7 @@ class SearchMainVH(view: View) : RecyclerView.ViewHolder(view) {
     private val afterTypingDelay = Runnable {
         onQueryChanged?.invoke(itemView.vhmsr_query.text.toString())
     }
+    private var textWatcher: TextWatcher? = null
 
     init {
         itemView.vhmsr_query.setOnEditorActionListener { textView, actionId, _ ->
@@ -68,22 +69,29 @@ class SearchMainVH(view: View) : RecyclerView.ViewHolder(view) {
                 false
             }
         }
-        itemView.vhmsr_query.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(editable: Editable) {
-                handler.removeCallbacks(afterTypingDelay)
-                if (editable.isNotEmpty()) {
-                    handler.postDelayed(afterTypingDelay, typingDelay)
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        })
     }
 
     fun init(item: SearchMainItem, onQueryChanged: (query: String) -> Unit) {
         this.onQueryChanged = onQueryChanged
-        itemView.vhmsr_query.setText(item.query)
+        itemView.vhmsr_query.apply {
+            removeTextChangedListener(textWatcher)
+            setText(item.query)
+            textWatcher = SearchTextWatcher(item)
+            addTextChangedListener(textWatcher)
+        }
+    }
+
+    private inner class SearchTextWatcher(val item: SearchMainItem) : TextWatcher {
+        override fun afterTextChanged(editable: Editable) {
+            item.query = editable.toString()
+            handler.removeCallbacks(afterTypingDelay)
+            if (editable.isNotEmpty()) {
+                handler.postDelayed(afterTypingDelay, typingDelay)
+            }
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     }
 
 }

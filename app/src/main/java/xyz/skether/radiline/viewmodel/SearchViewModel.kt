@@ -3,27 +3,35 @@ package xyz.skether.radiline.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
+import xyz.skether.radiline.notify
 import javax.inject.Inject
 
 class SearchViewModel : BaseViewModel() {
 
     private companion object Config {
         const val MIN_QUERY_LENGTH = 3
+        const val PAGE_SIZE = 20
     }
 
     @Inject
     lateinit var stationsManager: StationsManager
 
-    private val _stations: MutableLiveData<List<Station>> by lazy {
-        MutableLiveData<List<Station>>()
+    private val _stations: MutableLiveData<MutableList<Station>> by lazy {
+        MutableLiveData<MutableList<Station>>().apply {
+            value = mutableListOf()
+        }
     }
 
-    val stations: LiveData<List<Station>>
+    val stations: LiveData<out List<Station>>
         get() = _stations
+
+    private val state = SearchState()
 
     init {
         Injector.appComponent.inject(this)
@@ -35,9 +43,59 @@ class SearchViewModel : BaseViewModel() {
             return
         }
 
-        launch(Dispatchers.Default) {
-            _stations.postValue(stationsManager.searchStations(query))
+        state.reset(query)
+        _stations.value?.clear()
+        _stations.notify()
+
+        val tag = "search"
+        val job = launch {
+            val newStations = withContext(Dispatchers.Default) {
+                stationsManager.searchStations(query, PAGE_SIZE)
+            }
+            _stations.value?.addAll(newStations)
+            _stations.notify()
+            state.jobMap.remove(tag)
         }
+        state.jobMap[tag] = job
+    }
+
+    fun loadMore() {
+        val tag = "load_more"
+        val query = state.query
+        if (query == null || state.jobMap.contains(tag) || state.isEndReached) {
+            return
+        }
+
+        val job = launch {
+            val offset = _stations.value?.size ?: 0
+            val newStations = withContext(Dispatchers.Default) {
+                stationsManager.searchStations(query, PAGE_SIZE, offset)
+            }
+            if (newStations.size < PAGE_SIZE) {
+                state.isEndReached = true
+            }
+            _stations.value?.addAll(newStations)
+            _stations.notify()
+            state.jobMap.remove(tag)
+        }
+        state.jobMap[tag] = job
+    }
+
+    private class SearchState {
+
+        var query: String? = null
+        var isEndReached: Boolean = false
+        val jobMap: MutableMap<String, Job> = mutableMapOf()
+
+        fun reset(newQuery: String) {
+            query = newQuery
+            isEndReached = false
+
+            // Cancel all the previous jobs.
+            jobMap.forEach { (_, job) -> job.cancel() }
+            jobMap.clear()
+        }
+
     }
 
 }

@@ -11,10 +11,15 @@ import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.BaseFragment
 import xyz.skether.radiline.ui.base.LayoutId
+import xyz.skether.radiline.ui.base.OnLastItemScrollListener
 import xyz.skether.radiline.viewmodel.SearchViewModel
 
 @LayoutId(R.layout.fragment_base_main)
 class SearchFragment : BaseFragment(), SearchAdapter.Callback {
+
+    private companion object Config {
+        const val NUM_LAST_ITEMS = 3
+    }
 
     private lateinit var searchViewModel: SearchViewModel
     private val adapter = SearchAdapter(this)
@@ -27,6 +32,8 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
             val lm = LinearLayoutManager(context)
             layoutManager = lm
             addItemDecoration(DividerItemDecoration(context, lm.orientation))
+            clearOnScrollListeners()
+            addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS, searchViewModel::loadMore))
             adapter = this@SearchFragment.adapter
         }
     }

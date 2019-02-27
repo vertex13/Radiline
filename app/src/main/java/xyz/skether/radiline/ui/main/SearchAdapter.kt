@@ -4,8 +4,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
+import kotlin.math.min
 
 class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private companion object Config {
+        const val HEADER_ITEMS_SIZE = 1 // Search item
+    }
 
     private var items = mutableListOf<MainItem>()
 
@@ -40,13 +45,34 @@ class SearchAdapter(private val callback: Callback) : RecyclerView.Adapter<Recyc
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.ordinal
 
-    fun updateData(stations: List<Station>) {
-        val oldSize = items.size
-        items.subList(1, oldSize).clear()
-        notifyItemRangeRemoved(1, oldSize.dec())
+    fun updateData(updatedStations: List<Station>) {
+        val stationItems = items.subList(HEADER_ITEMS_SIZE, items.size)
+        var inconsistencyPos = min(stationItems.size, updatedStations.size)
+        for (i in 0 until inconsistencyPos) {
+            val item = stationItems[i] as StationMainItem
+            val station = updatedStations[i]
+            if (item.station.id != station.id) {
+                inconsistencyPos = i
+                break
+            }
+        }
+        inconsistencyPos += HEADER_ITEMS_SIZE
 
-        items.addAll(stations.map { StationMainItem(it) })
-        notifyItemRangeInserted(1, items.size.dec())
+        if (inconsistencyPos < items.size) {
+            // Remove old items.
+            val itemsToRemove = items.subList(inconsistencyPos, items.size)
+            val itemsToRemoveSize = itemsToRemove.size
+            itemsToRemove.clear()
+            notifyItemRangeRemoved(inconsistencyPos, itemsToRemoveSize)
+        }
+
+        val newStationsFrom = inconsistencyPos - HEADER_ITEMS_SIZE
+        if (newStationsFrom < updatedStations.size) {
+            // Insert new stations.
+            val newStations = updatedStations.subList(newStationsFrom, updatedStations.size)
+            items.addAll(newStations.map { StationMainItem(it) })
+            notifyItemRangeInserted(inconsistencyPos, newStations.size)
+        }
     }
 
     private fun getItem(position: Int): MainItem = items[position]
