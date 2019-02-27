@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.ui.base.newViewHolder
+import kotlin.math.min
 
 class TopStationsAdapter(private val callback: Callback) : RecyclerView.Adapter<StationMainVH>() {
 
@@ -19,13 +20,31 @@ class TopStationsAdapter(private val callback: Callback) : RecyclerView.Adapter<
 
     override fun getItemCount(): Int = items.size
 
-    fun updateData(stations: List<Station>) {
-        val oldSize = items.size
-        items.clear()
-        notifyItemRangeRemoved(0, oldSize)
+    fun updateData(updatedStations: List<Station>) {
+        var inconsistencyPos = min(items.size, updatedStations.size)
+        for (i in 0 until inconsistencyPos) {
+            val item = items[i]
+            val station = updatedStations[i]
+            if (item.station.id != station.id) {
+                inconsistencyPos = i
+                break
+            }
+        }
 
-        items.addAll(stations.map { StationMainItem(it) })
-        notifyItemRangeInserted(0, items.size)
+        if (inconsistencyPos < items.size) {
+            // Remove old items.
+            val itemsToRemove = items.subList(inconsistencyPos, items.size)
+            val itemsToRemoveSize = itemsToRemove.size
+            itemsToRemove.clear()
+            notifyItemRangeRemoved(inconsistencyPos, itemsToRemoveSize)
+        }
+
+        if (inconsistencyPos < updatedStations.size) {
+            // Insert new stations.
+            val newStations = updatedStations.subList(inconsistencyPos, updatedStations.size)
+            items.addAll(newStations.map { StationMainItem(it) })
+            notifyItemRangeInserted(inconsistencyPos, newStations.size)
+        }
     }
 
     private fun getItem(position: Int): StationMainItem = items[position]
