@@ -50,6 +50,11 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
+    def leakcanary_version = '1.6.3'
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanary_version"
+    debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:$leakcanary_version"
+
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.google.truth:truth:0.42'
