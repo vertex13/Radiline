@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<playlist version="1" xmlns="http://xspf.org/ns/0/">
+    <title>Dance Wave!</title>
+    <trackList>
+        <track>
+            <location>http://78.31.65.20:8080/dance.mp3</location>
+            <title>Dance Wave!</title>
+        </track>
+    </trackList>
+</playlist>

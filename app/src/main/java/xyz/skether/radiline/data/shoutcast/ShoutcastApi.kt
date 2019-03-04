@@ -27,4 +27,9 @@ interface ShoutcastApi {
      */
     suspend fun getSecondaryGenres(parentGenreId: Int): GenreListResponse
 
+    /**
+     * Get playlist for the station.
+     */
+    suspend fun getPlaylist(stationId: Int, tuneIn: String): PlaylistResponse
+
 }

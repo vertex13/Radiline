@@ -2,6 +2,7 @@ package xyz.skether.radiline.domain
 
 import xyz.skether.radiline.data.shoutcast.GenreResponse
 import xyz.skether.radiline.data.shoutcast.StationResponse
+import xyz.skether.radiline.data.shoutcast.TrackResponse
 
 data class Station(
     val id: Int,
@@ -23,19 +24,25 @@ data class Genre(
     var areAllStationsLoaded: Boolean = false
 }
 
-fun stationFromResponse(resp: StationResponse): Station {
-    return Station(
-        id = resp.id,
-        name = resp.name,
-        listeners = resp.numberListeners,
-        bitrate = resp.bitRate
-    )
-}
+data class Track(
+    val title: String,
+    val location: String
+)
 
-fun genreFromResponse(resp: GenreResponse): Genre {
-    return Genre(
-        id = resp.id,
-        name = resp.name,
-        hasSubGenres = resp.hasChildren
-    )
-}
+fun stationFromResponse(resp: StationResponse) = Station(
+    id = resp.id,
+    name = resp.name,
+    listeners = resp.numberListeners,
+    bitrate = resp.bitRate
+)
+
+fun genreFromResponse(resp: GenreResponse) = Genre(
+    id = resp.id,
+    name = resp.name,
+    hasSubGenres = resp.hasChildren
+)
+
+fun trackFromResponse(resp: TrackResponse) = Track(
+    title = resp.title,
+    location = resp.location
+)

@@ -112,6 +112,39 @@ private fun genreFromNode(node: Node): GenreResponse {
     )
 }
 
+data class PlaylistResponse(
+    val trackList: List<TrackResponse>
+) {
+
+    object Deserializer : ResponseDeserializable<PlaylistResponse> {
+        override fun deserialize(inputStream: InputStream): PlaylistResponse? {
+            val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
+            val root = doc.firstChild as Element
+            val trackListElement = root.getElementsByTagName("trackList").item(0) as Element
+
+            val trackList = mutableListOf<TrackResponse>()
+            val trackNodes = trackListElement.getElementsByTagName("track")
+            for (i in 0 until trackNodes.length) {
+                val element = trackNodes.item(i) as Element
+                trackList.add(trackFromElement(element))
+            }
+
+            return PlaylistResponse(trackList)
+        }
+    }
+
+}
+
+data class TrackResponse(
+    val title: String,
+    val location: String
+)
+
+private fun trackFromElement(element: Element) = TrackResponse(
+    title = element.getElementsByTagName("title").item(0).textContent,
+    location = element.getElementsByTagName("location").item(0).textContent
+)
+
 private fun NamedNodeMap.nodeValue(name: String): String = getNamedItem(name).nodeValue
 
 private fun NamedNodeMap.nodeValueOpt(name: String): String? = getNamedItem(name)?.nodeValue

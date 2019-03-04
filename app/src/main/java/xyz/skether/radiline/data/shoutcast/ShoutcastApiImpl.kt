@@ -31,4 +31,9 @@ class ShoutcastApiImpl : ShoutcastApi {
             .await(GenreListResponse.Deserializer)
     }
 
+    override suspend fun getPlaylist(stationId: Int, tuneIn: String): PlaylistResponse {
+        return Fuel.request(ShoutcastApiRouting.GetPlaylist(stationId, tuneIn))
+            .await(PlaylistResponse.Deserializer)
+    }
+
 }

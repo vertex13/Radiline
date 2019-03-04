@@ -11,6 +11,10 @@ fun Any.logError(message: String) {
     Log.e(javaClass.simpleName, message)
 }
 
+fun Any.logError(message: String, throwable: Throwable) {
+    Log.e(javaClass.simpleName, message, throwable)
+}
+
 fun Any.logWarn(message: String) {
     Log.w(javaClass.simpleName, message)
 }

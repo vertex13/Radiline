@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_base_main.*
 import xyz.skether.radiline.R
 import xyz.skether.radiline.domain.Station
+import xyz.skether.radiline.service.PlaybackService
 import xyz.skether.radiline.ui.base.BaseFragment
 import xyz.skether.radiline.ui.base.LayoutId
 import xyz.skether.radiline.ui.base.OnLastItemScrollListener
@@ -39,7 +40,9 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
     }
 
     override fun onStationSelected(station: Station) {
-        // todo
+        context?.apply {
+            startService(PlaybackService.playIntent(this, station.id))
+        }
     }
 
 }

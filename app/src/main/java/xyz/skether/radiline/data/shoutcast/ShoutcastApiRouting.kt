@@ -42,8 +42,18 @@ sealed class ShoutcastApiRouting : FuelRouting {
         val responseFormat: ResponseFormat
     ) : ShoutcastApiRouting()
 
-    override val basePath: String = "http://api.shoutcast.com"
+    class GetPlaylist(
+        val stationId: Int,
+        val tuneIn: String
+    ) : ShoutcastApiRouting()
+
     private val keyParam = "k" to BuildConfig.ShoutcastDevId
+
+    override val basePath: String
+        get() = when (this) {
+            is GetPlaylist -> "http://yp.shoutcast.com"
+            else -> "http://api.shoutcast.com"
+        }
 
     override val method: Method = Method.GET
 
@@ -54,6 +64,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
             is GetStationsByGenreId -> defaultParamsWith("genre_id" to genreId, "f" to responseFormat)
             is GetPrimaryGenres -> defaultParamsWith("f" to responseFormat)
             is GetSecondaryGenres -> defaultParamsWith("parentid" to parentGenreId, "f" to responseFormat)
+            is GetPlaylist -> listOf("id" to stationId)
         }
 
     override val path: String
@@ -63,6 +74,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
             is GetStationsByGenreId -> "station/advancedsearch"
             is GetPrimaryGenres -> "genre/primary"
             is GetSecondaryGenres -> "genre/secondary"
+            is GetPlaylist -> tuneIn
         }
 
     override val body: String? = null

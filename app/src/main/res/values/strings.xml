@@ -1,6 +1,8 @@
 <resources>
 
     <string name="app_name">Radiline</string>
+    <string name="default_notification_channel_name">Default channel</string>
+    <string name="error_loading_station">Could not load the station.</string>
     <string name="main_action_info">Info</string>
     <string name="main_action_previous">Previous</string>
     <string name="main_item_listeners">Listeners:</string>
