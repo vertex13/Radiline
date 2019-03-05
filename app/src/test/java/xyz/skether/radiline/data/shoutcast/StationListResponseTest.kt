@@ -10,10 +10,10 @@ class StationListResponseTest {
         val responseStream = javaClass.getResourceAsStream("/response-station-list-legacy.xml")!!
         val xmlResponse = StationListResponse.LegacyDeserializer.deserialize(responseStream)
         responseStream.close()
-        val sampleTuneIn = mapOf(
-            "base" to "/sbin/tunein-station.pls",
-            "base-m3u" to "/sbin/tunein-station.m3u",
-            "base-xspf" to "/sbin/tunein-station.xspf"
+        val sampleTuneInList = listOf(
+            TuneInResponse("base", "/sbin/tunein-station.pls"),
+            TuneInResponse("base-m3u", "/sbin/tunein-station.m3u"),
+            TuneInResponse("base-xspf", "/sbin/tunein-station.xspf")
         )
         val sampleStations = listOf(
             StationResponse(
@@ -47,7 +47,7 @@ class StationListResponseTest {
                 logo = "http://i.radionomy.com/document/radios/7/7c48/7c48c133-a1ee-42e6-97fa-6420420e8cad.jpg"
             )
         )
-        val sampleResponse = StationListResponse(sampleTuneIn, sampleStations)
+        val sampleResponse = StationListResponse(sampleTuneInList, sampleStations)
         assertThat(xmlResponse).isEqualTo(sampleResponse)
     }
 
@@ -56,10 +56,10 @@ class StationListResponseTest {
         val responseStream = javaClass.getResourceAsStream("/response-station-list.xml")!!
         val xmlResponse = StationListResponse.Deserializer.deserialize(responseStream)
         responseStream.close()
-        val sampleTuneIn = mapOf(
-            "base" to "/sbin/tunein-station.pls",
-            "base-m3u" to "/sbin/tunein-station.m3u",
-            "base-xspf" to "/sbin/tunein-station.xspf"
+        val sampleTuneInList = listOf(
+            TuneInResponse("base", "/sbin/tunein-station.pls"),
+            TuneInResponse("base-m3u", "/sbin/tunein-station.m3u"),
+            TuneInResponse("base-xspf", "/sbin/tunein-station.xspf")
         )
         val sampleStations = listOf(
             StationResponse(
@@ -93,7 +93,7 @@ class StationListResponseTest {
                 logo = "http://i.radionomy.com/document/radios/f/f8d3/f8d30ef6-cbcc-41b9-8bd5-ecd21b24f254.png"
             )
         )
-        val sampleResponse = StationListResponse(sampleTuneIn, sampleStations)
+        val sampleResponse = StationListResponse(sampleTuneInList, sampleStations)
         assertThat(xmlResponse).isEqualTo(sampleResponse)
     }
 

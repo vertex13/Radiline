@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.squareup.leakcanary.LeakCanary
+import xyz.skether.radiline.domain.di.Injector
 
 class App : Application() {
 
@@ -16,7 +17,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        logInfo("App is created")
+
+        Injector.init(this)
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return
@@ -26,6 +28,8 @@ class App : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannels()
         }
+
+        logInfo("App is created")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

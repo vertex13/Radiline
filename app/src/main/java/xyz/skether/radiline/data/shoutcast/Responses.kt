@@ -8,7 +8,7 @@ import java.io.InputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
 data class StationListResponse(
-    val tuneIn: Map<String, String>,
+    val tuneInList: List<TuneInResponse>,
     val stations: List<StationResponse>
 ) {
 
@@ -33,11 +33,10 @@ data class StationListResponse(
 }
 
 private fun stationListFromElement(dataElement: Element): StationListResponse {
-    val tuneIn = mutableMapOf<String, String>()
+    val tuneInList = mutableListOf<TuneInResponse>()
     val tuneInAttrs = dataElement.getElementsByTagName("tunein").item(0).attributes
     for (i in 0 until tuneInAttrs.length) {
-        val node = tuneInAttrs.item(i)
-        tuneIn[node.nodeName] = node.nodeValue
+        tuneInList.add(tuneInFromNode(tuneInAttrs.item(i)))
     }
 
     val stations = mutableListOf<StationResponse>()
@@ -46,15 +45,25 @@ private fun stationListFromElement(dataElement: Element): StationListResponse {
         stations.add(stationFromNode(stationNodes.item(i)))
     }
 
-    return StationListResponse(tuneIn, stations)
+    return StationListResponse(tuneInList, stations)
 }
+
+data class TuneInResponse(
+    val base: String,
+    val resource: String
+)
+
+private fun tuneInFromNode(node: Node) = TuneInResponse(
+    base = node.nodeName,
+    resource = node.nodeValue
+)
 
 data class StationResponse(
     val id: Long,
     val name: String,
+    val genreName: String?,
     val mediaType: String,
     val bitRate: Int,
-    val genreName: String?,
     val currentTrack: String?,
     val numberListeners: Int,
     val logo: String?
@@ -65,9 +74,9 @@ private fun stationFromNode(node: Node): StationResponse {
     return StationResponse(
         id = attrs.nodeValue("id").toLong(),
         name = attrs.nodeValue("name"),
+        genreName = attrs.nodeValueOpt("genre"),
         mediaType = attrs.nodeValue("mt"),
         bitRate = attrs.nodeValue("br").toInt(),
-        genreName = attrs.nodeValueOpt("genre"),
         currentTrack = attrs.nodeValueOpt("ct"),
         numberListeners = attrs.nodeValue("lc").toInt(),
         logo = attrs.nodeValueOpt("logo")
@@ -99,9 +108,9 @@ data class GenreListResponse(
 
 data class GenreResponse(
     val id: Long,
+    val parentId: Long?,
     val name: String,
-    val hasChildren: Boolean,
-    val parentId: Long?
+    val hasChildren: Boolean
 )
 
 private fun genreFromNode(node: Node): GenreResponse {
@@ -112,9 +121,9 @@ private fun genreFromNode(node: Node): GenreResponse {
     }
     return GenreResponse(
         id = attrs.nodeValue("id").toLong(),
+        parentId = parentId,
         name = attrs.nodeValue("name"),
-        hasChildren = attrs.nodeValue("haschildren").toBoolean(),
-        parentId = parentId
+        hasChildren = attrs.nodeValue("haschildren").toBoolean()
     )
 }
 

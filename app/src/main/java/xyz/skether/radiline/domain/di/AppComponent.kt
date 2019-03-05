@@ -7,7 +7,7 @@ import xyz.skether.radiline.viewmodel.GenresViewModel
 import xyz.skether.radiline.viewmodel.SearchViewModel
 import xyz.skether.radiline.viewmodel.TopStationsViewModel
 
-@Component(modules = [ShoutcastModule::class])
+@Component(modules = [ContextModule::class, DatabaseModule::class, ShoutcastModule::class])
 interface AppComponent {
 
     fun shoutcastApi(): ShoutcastApi
