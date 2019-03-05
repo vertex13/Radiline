@@ -23,6 +23,7 @@ import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.*
 import xyz.skether.radiline.App
 import xyz.skether.radiline.R
+import xyz.skether.radiline.data.shoutcast.ShoutcastError
 import xyz.skether.radiline.domain.PlaylistManager
 import xyz.skether.radiline.domain.Track
 import xyz.skether.radiline.domain.di.Injector
@@ -107,7 +108,7 @@ class PlaybackService : Service(), CoroutineScope {
         launch {
             val track = try {
                 withContext(Dispatchers.Default) { playlistManager.getStationTrack(id) }
-            } catch (e: Exception) {
+            } catch (e: ShoutcastError) {
                 isPlaying = false
                 updateNotification()
                 onError(e)
