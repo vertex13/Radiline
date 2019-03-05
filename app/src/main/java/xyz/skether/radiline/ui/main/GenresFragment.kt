@@ -31,7 +31,7 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         genresViewModel = ViewModelProviders.of(this).get(GenresViewModel::class.java)
         if (savedInstanceState != null) {
-            val expandedGenresIds = savedInstanceState.getIntegerArrayList(KEY_EXPANDED_GENRES_IDS)
+            val expandedGenresIds = savedInstanceState.getLongArray(KEY_EXPANDED_GENRES_IDS)
             currentGenre = findCurrentGenre(genresViewModel.genres.value, expandedGenresIds!!)
         }
 
@@ -49,7 +49,7 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putIntegerArrayList(KEY_EXPANDED_GENRES_IDS, getExpandedGenresIds())
+        outState.putLongArray(KEY_EXPANDED_GENRES_IDS, getExpandedGenresIds())
     }
 
     override fun onGenreSelected(genre: Genre) {
@@ -80,7 +80,7 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
         }
     }
 
-    private fun findCurrentGenre(genres: List<Genre>?, expandedGenresIds: List<Int>): Genre? {
+    private fun findCurrentGenre(genres: List<Genre>?, expandedGenresIds: LongArray): Genre? {
         var expandedGenre: Genre? = null
         var subGenres = genres
         for (expandedGenreId in expandedGenresIds) {
@@ -96,14 +96,14 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
         return expandedGenre
     }
 
-    private fun getExpandedGenresIds(): ArrayList<Int> {
-        val ids = ArrayList<Int>()
+    private fun getExpandedGenresIds(): LongArray {
+        val ids = ArrayList<Long>()
         var genre = currentGenre
         while (genre != null) {
             ids.add(0, genre.id)
             genre = genre.parent
         }
-        return ids
+        return ids.toLongArray()
     }
 
     private fun loadMoreStations() {

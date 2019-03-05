@@ -5,7 +5,7 @@ import xyz.skether.radiline.data.shoutcast.StationResponse
 import xyz.skether.radiline.data.shoutcast.TrackResponse
 
 data class Station(
-    val id: Int,
+    val id: Long,
     val name: String,
     val listeners: Int = 1234,
     val bitrate: Int = 128
@@ -14,7 +14,7 @@ data class Station(
 }
 
 data class Genre(
-    val id: Int,
+    val id: Long,
     val name: String,
     val hasSubGenres: Boolean
 ) {

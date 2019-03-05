@@ -16,7 +16,7 @@ class ShoutcastApiImpl : ShoutcastApi {
             .await(StationListResponse.LegacyDeserializer)
     }
 
-    override suspend fun getStationsByGenreId(genreId: Int, limit: Int, offset: Int): StationListResponse {
+    override suspend fun getStationsByGenreId(genreId: Long, limit: Int, offset: Int): StationListResponse {
         return Fuel.request(ShoutcastApiRouting.GetStationsByGenreId(genreId, limit, offset, XML))
             .await(StationListResponse.Deserializer)
     }
@@ -26,12 +26,12 @@ class ShoutcastApiImpl : ShoutcastApi {
             .await(GenreListResponse.Deserializer)
     }
 
-    override suspend fun getSecondaryGenres(parentGenreId: Int): GenreListResponse {
+    override suspend fun getSecondaryGenres(parentGenreId: Long): GenreListResponse {
         return Fuel.request(ShoutcastApiRouting.GetSecondaryGenres(parentGenreId, XML))
             .await(GenreListResponse.Deserializer)
     }
 
-    override suspend fun getPlaylist(stationId: Int, tuneIn: String): PlaylistResponse {
+    override suspend fun getPlaylist(stationId: Long, tuneIn: String): PlaylistResponse {
         return Fuel.request(ShoutcastApiRouting.GetPlaylist(stationId, tuneIn))
             .await(PlaylistResponse.Deserializer)
     }

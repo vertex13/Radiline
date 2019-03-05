@@ -50,11 +50,11 @@ private fun stationListFromElement(dataElement: Element): StationListResponse {
 }
 
 data class StationResponse(
-    val id: Int,
+    val id: Long,
     val name: String,
     val mediaType: String,
     val bitRate: Int,
-    val genre: String,
+    val genreName: String?,
     val currentTrack: String?,
     val numberListeners: Int,
     val logo: String?
@@ -63,11 +63,11 @@ data class StationResponse(
 private fun stationFromNode(node: Node): StationResponse {
     val attrs = node.attributes
     return StationResponse(
-        id = attrs.nodeValue("id").toInt(),
+        id = attrs.nodeValue("id").toLong(),
         name = attrs.nodeValue("name"),
         mediaType = attrs.nodeValue("mt"),
         bitRate = attrs.nodeValue("br").toInt(),
-        genre = attrs.nodeValue("genre"),
+        genreName = attrs.nodeValueOpt("genre"),
         currentTrack = attrs.nodeValueOpt("ct"),
         numberListeners = attrs.nodeValue("lc").toInt(),
         logo = attrs.nodeValueOpt("logo")
@@ -98,17 +98,23 @@ data class GenreListResponse(
 }
 
 data class GenreResponse(
-    val id: Int,
+    val id: Long,
     val name: String,
-    val hasChildren: Boolean
+    val hasChildren: Boolean,
+    val parentId: Long?
 )
 
 private fun genreFromNode(node: Node): GenreResponse {
     val attrs = node.attributes
+    var parentId = attrs.nodeValueOpt("parentid")?.toLong()
+    if (parentId != null && parentId == 0L) {
+        parentId = null
+    }
     return GenreResponse(
-        id = attrs.nodeValue("id").toInt(),
+        id = attrs.nodeValue("id").toLong(),
         name = attrs.nodeValue("name"),
-        hasChildren = attrs.nodeValue("haschildren").toBoolean()
+        hasChildren = attrs.nodeValue("haschildren").toBoolean(),
+        parentId = parentId
     )
 }
 

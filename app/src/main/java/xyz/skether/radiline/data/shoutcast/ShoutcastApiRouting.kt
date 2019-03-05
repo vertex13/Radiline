@@ -27,7 +27,7 @@ sealed class ShoutcastApiRouting : FuelRouting {
     ) : ShoutcastApiRouting(), Paginated
 
     class GetStationsByGenreId(
-        val genreId: Int,
+        val genreId: Long,
         override val limit: Int,
         override val offset: Int,
         val responseFormat: ResponseFormat
@@ -38,12 +38,12 @@ sealed class ShoutcastApiRouting : FuelRouting {
     ) : ShoutcastApiRouting()
 
     class GetSecondaryGenres(
-        val parentGenreId: Int,
+        val parentGenreId: Long,
         val responseFormat: ResponseFormat
     ) : ShoutcastApiRouting()
 
     class GetPlaylist(
-        val stationId: Int,
+        val stationId: Long,
         val tuneIn: String
     ) : ShoutcastApiRouting()
 

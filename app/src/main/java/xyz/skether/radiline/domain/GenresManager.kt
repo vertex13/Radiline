@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class GenresManager @Inject constructor(private val api: ShoutcastApi) {
 
-    suspend fun getGenres(parentGenreId: Int? = null): List<Genre> {
+    suspend fun getGenres(parentGenreId: Long? = null): List<Genre> {
         return if (parentGenreId == null) {
             getPrimaryGenres()
         } else {
@@ -18,7 +18,7 @@ class GenresManager @Inject constructor(private val api: ShoutcastApi) {
         return response.genres.map(::genreFromResponse)
     }
 
-    private suspend fun getSecondaryGenres(parentGenreId: Int): List<Genre> {
+    private suspend fun getSecondaryGenres(parentGenreId: Long): List<Genre> {
         val response = api.getSecondaryGenres(parentGenreId)
         return response.genres.map(::genreFromResponse)
     }

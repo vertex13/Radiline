@@ -35,7 +35,7 @@ class PlaybackService : Service(), CoroutineScope {
     @Inject
     lateinit var playlistManager: PlaylistManager
 
-    var currentStationId: Int? = null
+    var currentStationId: Long? = null
     var currentTrack: Track? = null // todo; tmp cache; replace it
     var isPlaying: Boolean = false
         private set(value) {
@@ -81,7 +81,7 @@ class PlaybackService : Service(), CoroutineScope {
         when (intent.action) {
             ACTION_PLAY -> {
                 val stationId = if (intent.hasExtra(PARAM_STATION_ID)) {
-                    intent.getIntExtra(PARAM_STATION_ID, -1)
+                    intent.getLongExtra(PARAM_STATION_ID, -1)
                 } else {
                     null
                 }
@@ -96,7 +96,7 @@ class PlaybackService : Service(), CoroutineScope {
     /**
      * Turn on the station with the [stationId] or if the [stationId] is null turn on the previous station.
      */
-    fun playStation(stationId: Int? = null) {
+    fun playStation(stationId: Long? = null) {
         val id = stationId ?: currentStationId ?: return
         currentStationId = id
         isPlaying = true
@@ -220,7 +220,7 @@ class PlaybackService : Service(), CoroutineScope {
          * Create an intent to turn on the station with the [stationId]
          * or if the [stationId] is null turn on the previous station.
          */
-        fun playIntent(context: Context, stationId: Int? = null): Intent {
+        fun playIntent(context: Context, stationId: Long? = null): Intent {
             return Intent(context, PlaybackService::class.java).apply {
                 action = ACTION_PLAY
                 if (stationId != null) {

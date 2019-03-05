@@ -15,7 +15,7 @@ class StationsManager @Inject constructor(private val api: ShoutcastApi) {
         return response.stations.map(::stationFromResponse)
     }
 
-    suspend fun getStationsByGenreId(genreId: Int, limit: Int = 10, offset: Int = 0): List<Station> {
+    suspend fun getStationsByGenreId(genreId: Long, limit: Int = 10, offset: Int = 0): List<Station> {
         val response = api.getStationsByGenreId(genreId, limit, offset)
         return response.stations.map(::stationFromResponse)
     }

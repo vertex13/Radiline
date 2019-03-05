@@ -15,7 +15,7 @@ interface ShoutcastApi {
     /**
      * Get stations by genre ID.
      */
-    suspend fun getStationsByGenreId(genreId: Int, limit: Int, offset: Int): StationListResponse
+    suspend fun getStationsByGenreId(genreId: Long, limit: Int, offset: Int): StationListResponse
 
     /**
      * Get primary genres.
@@ -25,11 +25,11 @@ interface ShoutcastApi {
     /**
      * Get secondary genres.
      */
-    suspend fun getSecondaryGenres(parentGenreId: Int): GenreListResponse
+    suspend fun getSecondaryGenres(parentGenreId: Long): GenreListResponse
 
     /**
      * Get playlist for the station.
      */
-    suspend fun getPlaylist(stationId: Int, tuneIn: String): PlaylistResponse
+    suspend fun getPlaylist(stationId: Long, tuneIn: String): PlaylistResponse
 
 }
