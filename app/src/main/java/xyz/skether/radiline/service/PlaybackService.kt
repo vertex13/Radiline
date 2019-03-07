@@ -28,6 +28,7 @@ import xyz.skether.radiline.domain.Track
 import xyz.skether.radiline.domain.di.Injector
 import xyz.skether.radiline.domain.manager.PlaylistManager
 import xyz.skether.radiline.ui.main.MainActivity
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -36,7 +37,7 @@ class PlaybackService : Service(), CoroutineScope {
     @Inject
     lateinit var playlistManager: PlaylistManager
 
-    var currentStationId: Long? = null
+    private val stationIdHistory: Deque<Long> = LinkedList()
     var currentTrack: Track? = null
         private set(value) {
             field = value
@@ -102,8 +103,11 @@ class PlaybackService : Service(), CoroutineScope {
      * Turn on the station with the [stationId] or if the [stationId] is null turn on the previous station.
      */
     fun playStation(stationId: Long? = null) {
+        val currentStationId = stationIdHistory.peek()
         val id = stationId ?: currentStationId ?: return
-        currentStationId = id
+        if (id != currentStationId) {
+            stationIdHistory.push(id)
+        }
         isPlaying = true
 
         startForeground(NOTIFICATION_ID, createNotification())
@@ -124,6 +128,13 @@ class PlaybackService : Service(), CoroutineScope {
                 exoPlayer.prepare(createMediaSource(track.location))
                 exoPlayer.playWhenReady = true
             }
+        }
+    }
+
+    fun playPreviousStation() {
+        if (stationIdHistory.size > 1) {
+            stationIdHistory.poll()
+            playStation()
         }
     }
 

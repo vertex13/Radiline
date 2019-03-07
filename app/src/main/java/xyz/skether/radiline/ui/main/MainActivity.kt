@@ -69,7 +69,10 @@ class MainActivity : BaseActivity(), ServiceConnection {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_previous -> true
+        R.id.action_previous -> {
+            playbackService?.playPreviousStation()
+            true
+        }
         R.id.action_info -> true
         else -> super.onOptionsItemSelected(item)
     }
