@@ -24,9 +24,9 @@ import kotlinx.coroutines.*
 import xyz.skether.radiline.App
 import xyz.skether.radiline.R
 import xyz.skether.radiline.data.shoutcast.ShoutcastError
-import xyz.skether.radiline.domain.PlaylistManager
 import xyz.skether.radiline.domain.Track
 import xyz.skether.radiline.domain.di.Injector
+import xyz.skether.radiline.domain.manager.PlaylistManager
 import xyz.skether.radiline.ui.main.MainActivity
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -37,7 +37,11 @@ class PlaybackService : Service(), CoroutineScope {
     lateinit var playlistManager: PlaylistManager
 
     var currentStationId: Long? = null
-    var currentTrack: Track? = null // todo; tmp cache; replace it
+    var currentTrack: Track? = null
+        private set(value) {
+            field = value
+            listeners.forEach { it.onTrackChanged(value) }
+        }
     var isPlaying: Boolean = false
         private set(value) {
             field = value
@@ -116,7 +120,7 @@ class PlaybackService : Service(), CoroutineScope {
             }
             if (track != null) {
                 currentTrack = track
-                updateNotification() // todo remove the line
+                updateNotification()
                 exoPlayer.prepare(createMediaSource(track.location))
                 exoPlayer.playWhenReady = true
             }
@@ -198,6 +202,8 @@ class PlaybackService : Service(), CoroutineScope {
 
     interface Listener {
         fun onStateChanged(isPlaying: Boolean)
+
+        fun onTrackChanged(track: Track?)
 
         fun onError(exception: Exception)
     }

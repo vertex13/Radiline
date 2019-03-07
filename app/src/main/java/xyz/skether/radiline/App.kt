@@ -7,7 +7,13 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.squareup.leakcanary.LeakCanary
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import xyz.skether.radiline.data.db.AppDatabase
 import xyz.skether.radiline.domain.di.Injector
+import xyz.skether.radiline.utils.logInfo
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
 
@@ -29,6 +35,8 @@ class App : Application() {
             createNotificationChannels()
         }
 
+        deleteOldDatabaseData(Injector.appComponent.appDatabase())
+
         logInfo("App is created")
     }
 
@@ -39,6 +47,16 @@ class App : Application() {
         val channel = NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL_ID, name, importance)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun deleteOldDatabaseData(appDatabase: AppDatabase) {
+        val freshDuration = TimeUnit.DAYS.toMillis(7)
+        val freshTime = System.currentTimeMillis() - freshDuration
+
+        GlobalScope.launch(Dispatchers.Default) {
+            appDatabase.genreDao().deleteOld(freshTime)
+            appDatabase.stationDao().deleteOld(freshTime)
+        }
     }
 
 }

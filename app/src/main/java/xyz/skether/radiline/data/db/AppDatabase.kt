@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [DBStation::class, DBGenre::class, DBTuneIn::class], version = 1)
+@Database(entities = [DBStation::class, DBGenre::class, DBTuneIn::class, DBUpdateInfo::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun stationDao(): StationDao
@@ -13,6 +13,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun genreDao(): GenreDao
 
     abstract fun tuneInDao(): TuneInDao
+
+    abstract fun updateInfoDao(): UpdateInfoDao
 
     companion object {
 

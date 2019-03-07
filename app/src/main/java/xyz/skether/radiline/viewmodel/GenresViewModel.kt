@@ -5,11 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import xyz.skether.radiline.data.shoutcast.ShoutcastError
 import xyz.skether.radiline.domain.Genre
-import xyz.skether.radiline.domain.GenresManager
-import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
-import xyz.skether.radiline.notify
+import xyz.skether.radiline.domain.manager.GenresManager
+import xyz.skether.radiline.domain.manager.StationsManager
+import xyz.skether.radiline.utils.notify
+import xyz.skether.radiline.utils.setError
 import javax.inject.Inject
 
 class GenresViewModel : BaseViewModel() {
@@ -23,14 +25,20 @@ class GenresViewModel : BaseViewModel() {
     @Inject
     lateinit var stationManager: StationsManager
 
-    private val _genres: MutableLiveData<List<Genre>> by lazy {
-        MutableLiveData<List<Genre>>().also {
+    private val _genres: MutableLiveData<MutableList<Genre>> by lazy {
+        MutableLiveData<MutableList<Genre>>().also {
+            it.value = mutableListOf()
             loadGenres()
         }
     }
 
-    val genres: LiveData<List<Genre>>
+    val genres: LiveData<out List<Genre>>
         get() = _genres
+
+    private val _error = MutableLiveData<Throwable?>()
+
+    val error: LiveData<Throwable?>
+        get() = _error
 
     private val currentTasks = mutableSetOf<String>()
 
@@ -45,15 +53,19 @@ class GenresViewModel : BaseViewModel() {
         }
         launch {
             currentTasks.add(key)
-            val subGenres = withContext(Dispatchers.Default) {
-                genresManager.getGenres(genre.id)
+            try {
+                val subGenres = withContext(Dispatchers.Default) {
+                    genresManager.getSecondaryGenres(genre.id)
+                }
+                genre.subGenres = mutableListOf()
+                for (subGenre in subGenres) {
+                    subGenre.parent = genre
+                    genre.subGenres!!.add(subGenre)
+                }
+                _genres.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
             }
-            genre.subGenres = mutableListOf()
-            for (subGenre in subGenres) {
-                subGenre.parent = genre
-                genre.subGenres!!.add(subGenre)
-            }
-            _genres.notify()
             currentTasks.remove(key)
         }
     }
@@ -65,28 +77,38 @@ class GenresViewModel : BaseViewModel() {
         }
         launch {
             currentTasks.add(key)
-            val offset = genre.stations?.size ?: 0
-            val stations = withContext(Dispatchers.Default) {
-                stationManager.getStationsByGenreId(genre.id, PAGE_SIZE, offset)
+            try {
+                val offset = genre.stations?.size ?: 0
+                val stations = withContext(Dispatchers.Default) {
+                    stationManager.getStationsByGenreId(genre.id, PAGE_SIZE, offset)
+                }
+                if (stations.size != PAGE_SIZE) {
+                    genre.areAllStationsLoaded = true
+                }
+                if (genre.stations == null) {
+                    genre.stations = mutableListOf()
+                }
+                for (station in stations) {
+                    station.genre = genre
+                    genre.stations!!.add(station)
+                }
+                _genres.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
             }
-            if (stations.size != PAGE_SIZE) {
-                genre.areAllStationsLoaded = true
-            }
-            if (genre.stations == null) {
-                genre.stations = mutableListOf()
-            }
-            for (station in stations) {
-                station.genre = genre
-                genre.stations!!.add(station)
-            }
-            _genres.notify()
             currentTasks.remove(key)
         }
     }
 
     private fun loadGenres() {
-        launch(Dispatchers.Default) {
-            _genres.postValue(genresManager.getGenres())
+        launch {
+            try {
+                val primaryGenres = withContext(Dispatchers.Default) { genresManager.getPrimaryGenres() }
+                _genres.value!!.addAll(primaryGenres)
+                _genres.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
+            }
         }
     }
 

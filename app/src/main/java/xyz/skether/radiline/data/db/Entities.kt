@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "station")
 data class DBStation(
     @PrimaryKey var id: Long,
-    var genreId: Long,
+    var genreId: Long?,
     var name: String,
     var mediaType: String,
     var bitRate: Int,
@@ -31,4 +31,11 @@ data class DBTuneIn(
     @PrimaryKey var base: String,
     var resource: String,
     var updatedAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "update_info")
+class DBUpdateInfo(
+    @PrimaryKey val methodName: String,
+    val itemsNumber: Int,
+    val updatedAt: Long = System.currentTimeMillis()
 )

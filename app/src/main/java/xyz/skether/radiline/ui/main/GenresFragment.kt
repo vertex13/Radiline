@@ -14,6 +14,7 @@ import xyz.skether.radiline.service.PlaybackService
 import xyz.skether.radiline.ui.base.BaseFragment
 import xyz.skether.radiline.ui.base.LayoutId
 import xyz.skether.radiline.ui.base.OnLastItemScrollListener
+import xyz.skether.radiline.utils.logError
 import xyz.skether.radiline.viewmodel.GenresViewModel
 
 @LayoutId(R.layout.fragment_base_main)
@@ -36,6 +37,7 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
         }
 
         genresViewModel.genres.observe(this, Observer(::updateData))
+        genresViewModel.error.observe(this, Observer(::onError))
 
         recyclerView.apply {
             val lm = LinearLayoutManager(context)
@@ -128,6 +130,13 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
         stations?.forEach { items.add(StationMainItem(it)) }
 
         adapter.updateData(items)
+    }
+
+    private fun onError(error: Throwable?) {
+        if (error != null) {
+            showSnackbar(R.string.error_loading_data)
+            logError(error)
+        }
     }
 
     private fun showItems(genre: Genre?) {

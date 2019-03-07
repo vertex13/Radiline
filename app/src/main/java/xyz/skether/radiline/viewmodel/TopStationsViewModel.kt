@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import xyz.skether.radiline.data.shoutcast.ShoutcastError
 import xyz.skether.radiline.domain.Station
-import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
-import xyz.skether.radiline.notify
+import xyz.skether.radiline.domain.manager.StationsManager
+import xyz.skether.radiline.utils.notify
+import xyz.skether.radiline.utils.setError
 import javax.inject.Inject
 
 class TopStationsViewModel : BaseViewModel() {
@@ -30,6 +32,11 @@ class TopStationsViewModel : BaseViewModel() {
     val stations: LiveData<out List<Station>>
         get() = _stations
 
+    private val _error = MutableLiveData<Throwable?>()
+
+    val error: LiveData<Throwable?>
+        get() = _error
+
     private var isLoading = false
 
     init {
@@ -42,12 +49,16 @@ class TopStationsViewModel : BaseViewModel() {
         }
         launch {
             isLoading = true
-            val offset = _stations.value?.size ?: 0
-            val newStations = withContext(Dispatchers.Default) {
-                stationsManager.getTopStations(PAGE_SIZE, offset)
+            try {
+                val offset = _stations.value?.size ?: 0
+                val newStations = withContext(Dispatchers.Default) {
+                    stationsManager.getTopStations(PAGE_SIZE, offset)
+                }
+                _stations.value?.addAll(newStations)
+                _stations.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
             }
-            _stations.value?.addAll(newStations)
-            _stations.notify()
             isLoading = false
         }
     }

@@ -13,6 +13,7 @@ import xyz.skether.radiline.service.PlaybackService
 import xyz.skether.radiline.ui.base.BaseFragment
 import xyz.skether.radiline.ui.base.LayoutId
 import xyz.skether.radiline.ui.base.OnLastItemScrollListener
+import xyz.skether.radiline.utils.logError
 import xyz.skether.radiline.viewmodel.TopStationsViewModel
 
 @LayoutId(R.layout.fragment_base_main)
@@ -28,6 +29,7 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         topStationsViewModel = ViewModelProviders.of(this).get(TopStationsViewModel::class.java)
         topStationsViewModel.stations.observe(this, Observer(adapter::updateData))
+        topStationsViewModel.error.observe(this, Observer(::onError))
 
         recyclerView.apply {
             val lm = LinearLayoutManager(context)
@@ -42,6 +44,13 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
     override fun onStationSelected(station: Station) {
         context?.apply {
             startService(PlaybackService.playIntent(this, station.id))
+        }
+    }
+
+    private fun onError(error: Throwable?) {
+        if (error != null) {
+            showSnackbar(R.string.error_loading_data)
+            logError(error)
         }
     }
 

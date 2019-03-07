@@ -12,10 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.activity_main.*
 import xyz.skether.radiline.R
+import xyz.skether.radiline.domain.Track
 import xyz.skether.radiline.service.PlaybackService
 import xyz.skether.radiline.ui.base.BaseActivity
 import xyz.skether.radiline.ui.base.LayoutId
-import xyz.skether.radiline.ui.base.showSnackbar
+import xyz.skether.radiline.utils.logError
 
 @LayoutId(R.layout.activity_main)
 class MainActivity : BaseActivity(), ServiceConnection {
@@ -77,7 +78,8 @@ class MainActivity : BaseActivity(), ServiceConnection {
         binder as PlaybackService.LocalBinder
         playbackService = binder.service.also {
             it.addListener(playbackListener)
-            updateViews(it.isPlaying)
+            updatePlayButton(it.isPlaying)
+            updateTitle(it.currentTrack)
         }
     }
 
@@ -99,9 +101,12 @@ class MainActivity : BaseActivity(), ServiceConnection {
         return true
     }
 
-    private fun updateViews(isPlaying: Boolean) {
+    private fun updateTitle(track: Track?) {
+        toolbar_layout.title = track?.title ?: getString(R.string.app_name)
+    }
+
+    private fun updatePlayButton(isPlaying: Boolean) {
         if (isPlaying) {
-            toolbar_layout.title = playbackService?.currentTrack?.title ?: getString(R.string.app_name)
             changePlayButtonIcon(R.drawable.ic_stop_white_24dp)
         } else {
             changePlayButtonIcon(R.drawable.ic_play_arrow_white_24dp)
@@ -117,11 +122,16 @@ class MainActivity : BaseActivity(), ServiceConnection {
     private inner class PlaybackListener : PlaybackService.Listener {
 
         override fun onStateChanged(isPlaying: Boolean) {
-            updateViews(isPlaying)
+            updatePlayButton(isPlaying)
+        }
+
+        override fun onTrackChanged(track: Track?) {
+            updateTitle(track)
         }
 
         override fun onError(exception: Exception) {
-            showSnackbar(rootLayout, R.string.error_loading_station)
+            showSnackbar(R.string.error_play_station)
+            logError(exception)
         }
 
     }

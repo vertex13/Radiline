@@ -6,10 +6,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import xyz.skether.radiline.data.shoutcast.ShoutcastError
 import xyz.skether.radiline.domain.Station
-import xyz.skether.radiline.domain.StationsManager
 import xyz.skether.radiline.domain.di.Injector
-import xyz.skether.radiline.notify
+import xyz.skether.radiline.domain.manager.StationsManager
+import xyz.skether.radiline.utils.notify
+import xyz.skether.radiline.utils.setError
 import javax.inject.Inject
 
 class SearchViewModel : BaseViewModel() {
@@ -31,6 +33,11 @@ class SearchViewModel : BaseViewModel() {
     val stations: LiveData<out List<Station>>
         get() = _stations
 
+    private val _error = MutableLiveData<Throwable?>()
+
+    val error: LiveData<Throwable?>
+        get() = _error
+
     private val state = SearchState()
 
     init {
@@ -49,11 +56,15 @@ class SearchViewModel : BaseViewModel() {
 
         val tag = "search"
         val job = launch {
-            val newStations = withContext(Dispatchers.Default) {
-                stationsManager.searchStations(query, PAGE_SIZE)
+            try {
+                val newStations = withContext(Dispatchers.Default) {
+                    stationsManager.searchStations(query, PAGE_SIZE)
+                }
+                _stations.value?.addAll(newStations)
+                _stations.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
             }
-            _stations.value?.addAll(newStations)
-            _stations.notify()
             state.jobMap.remove(tag)
         }
         state.jobMap[tag] = job
@@ -67,15 +78,19 @@ class SearchViewModel : BaseViewModel() {
         }
 
         val job = launch {
-            val offset = _stations.value?.size ?: 0
-            val newStations = withContext(Dispatchers.Default) {
-                stationsManager.searchStations(query, PAGE_SIZE, offset)
+            try {
+                val offset = _stations.value?.size ?: 0
+                val newStations = withContext(Dispatchers.Default) {
+                    stationsManager.searchStations(query, PAGE_SIZE, offset)
+                }
+                if (newStations.size < PAGE_SIZE) {
+                    state.isEndReached = true
+                }
+                _stations.value?.addAll(newStations)
+                _stations.notify()
+            } catch (e: ShoutcastError) {
+                _error.setError(e)
             }
-            if (newStations.size < PAGE_SIZE) {
-                state.isEndReached = true
-            }
-            _stations.value?.addAll(newStations)
-            _stations.notify()
             state.jobMap.remove(tag)
         }
         state.jobMap[tag] = job

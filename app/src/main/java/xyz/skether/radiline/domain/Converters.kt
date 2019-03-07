@@ -22,7 +22,7 @@ fun stationFromDB(dbStation: DBStation) = Station(
     bitrate = dbStation.bitRate
 )
 
-fun stationResponseToDB(resp: StationResponse, genreId: Long) = DBStation(
+fun stationResponseToDB(resp: StationResponse, genreId: Long?) = DBStation(
     id = resp.id,
     genreId = genreId,
     name = resp.name,
