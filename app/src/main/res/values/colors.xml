@@ -3,12 +3,11 @@
 
     <color name="primary">#6C5B7B</color>
     <color name="primaryDark">#5E4F6B</color>
-    <color name="secondary">#F7DACF</color>
-    <color name="secondaryDark">#C06C84</color>
     <color name="accent">#F67280</color>
 
     <color name="transparent">#00000000</color>
     <color name="notification">#89000000</color>
-    <color name="bg_nav">#EFF2E2</color>
+    <color name="bg_page">#F0F0F0</color>
+    <color name="bg_station">#E8E8E8</color>
 
 </resources>
