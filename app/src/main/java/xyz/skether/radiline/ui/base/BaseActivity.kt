@@ -7,6 +7,12 @@ import com.google.android.material.snackbar.Snackbar
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    private companion object {
+        const val TIME_BETWEEN_SNACKBARS = 1000L // 1 second
+    }
+
+    private var snackbarLastTime = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -16,6 +22,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun showSnackbar(@StringRes textId: Int, length: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(window.decorView.rootView, textId, length).show()
+        snackbarLastTime = System.currentTimeMillis()
+    }
+
+    fun showSnackbarAllowingSkip(@StringRes textId: Int, length: Int = Snackbar.LENGTH_LONG) {
+        if (System.currentTimeMillis() > snackbarLastTime + TIME_BETWEEN_SNACKBARS) {
+            showSnackbar(textId, length)
+        }
     }
 
 }

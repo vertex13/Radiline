@@ -53,7 +53,7 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
 
     private fun onError(error: Throwable?) {
         if (error != null) {
-            showSnackbar(R.string.error_loading_data)
+            showSnackbarAllowingSkip(R.string.error_loading_data)
             logError(error)
         }
     }

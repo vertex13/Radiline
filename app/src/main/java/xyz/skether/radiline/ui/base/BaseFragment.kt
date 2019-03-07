@@ -19,4 +19,8 @@ abstract class BaseFragment : Fragment() {
         (activity as? BaseActivity)?.showSnackbar(textId, length)
     }
 
+    fun showSnackbarAllowingSkip(@StringRes textId: Int, length: Int = Snackbar.LENGTH_LONG) {
+        (activity as? BaseActivity)?.showSnackbarAllowingSkip(textId, length)
+    }
+
 }
