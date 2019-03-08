@@ -116,6 +116,7 @@ class PlaybackService : Service(), CoroutineScope {
         launch {
             val track = try {
                 withContext(Dispatchers.Default) { playlistManager.getStationTrack(id) }
+                    ?: throw ShoutcastError("No track error.")
             } catch (e: ShoutcastError) {
                 isPlaying = false
                 updateNotification()

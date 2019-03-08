@@ -1,3 +1,9 @@
 package xyz.skether.radiline.data.shoutcast
 
-class ShoutcastError(cause: Throwable) : Exception(cause)
+class ShoutcastError : Exception {
+
+    constructor(message: String) : super(message)
+
+    constructor(cause: Throwable) : super(cause)
+
+}
