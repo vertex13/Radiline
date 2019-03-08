@@ -1,0 +1,16 @@
+<resources>
+
+    <string name="default_notification_channel_name">Канал по умолчанию</string>
+    <string name="error_play_station">Не удалось воспроизвести станцию.</string>
+    <string name="error_loading_data">Не удалось загрузить данные.</string>
+    <string name="main_action_previous">Предыдущая</string>
+    <string name="main_item_listeners">Слушателей:</string>
+    <string name="main_item_bitrate">Битрейт:</string>
+    <string name="main_item_query_hint">Запрос…</string>
+    <string name="main_nav_genres">Жанры</string>
+    <string name="main_nav_top">Популярные</string>
+    <string name="main_nav_search">Поиск</string>
+    <string name="about_title">О программе</string>
+    <string name="about_message">Это приложение использует сервис <a href="https://www.shoutcast.com">Shoutcast</a> для аудио стриминга.</string>
+
+</resources>

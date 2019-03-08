@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">Radiline</string>
-    <string name="ok">OK</string>
+    <string name="app_name" translatable="false">Radiline</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="default_notification_channel_name">Default channel</string>
     <string name="error_play_station">Could not play the station.</string>
     <string name="error_loading_data">Could not load the data.</string>
