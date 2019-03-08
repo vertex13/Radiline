@@ -5,9 +5,12 @@ import android.content.Context
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.transaction
 import kotlinx.android.synthetic.main.activity_main.*
@@ -73,7 +76,10 @@ class MainActivity : BaseActivity(), ServiceConnection {
             playbackService?.playPreviousStation()
             true
         }
-        R.id.action_info -> true
+        R.id.action_about -> {
+            showAboutDialog()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -120,6 +126,17 @@ class MainActivity : BaseActivity(), ServiceConnection {
         playButton.setImageResource(resId)
         playButton.hide() // because of this bug
         playButton.show() // https://stackoverflow.com/questions/51919865/disappearing-fab-icon-on-navigation-fragment-change
+    }
+
+    private fun showAboutDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setIcon(R.drawable.ic_info_outline_black_24dp)
+            .setTitle(R.string.about_title)
+            .setMessage(R.string.about_message)
+            .setPositiveButton(R.string.ok, null)
+            .create()
+        dialog.show()
+        dialog.findViewById<TextView>(android.R.id.message)!!.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private inner class PlaybackListener : PlaybackService.Listener {
