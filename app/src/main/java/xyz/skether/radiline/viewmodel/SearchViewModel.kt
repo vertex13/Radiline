@@ -47,6 +47,7 @@ class SearchViewModel : BaseViewModel() {
     fun search(query: String) {
         val trimmedQuery = query.trim()
         if (trimmedQuery.length < MIN_QUERY_LENGTH) {
+            _error.setError(BadQueryError())
             return
         }
 
@@ -70,10 +71,14 @@ class SearchViewModel : BaseViewModel() {
         state.jobMap[tag] = job
     }
 
+    fun restartSearch() {
+        search(state.query)
+    }
+
     fun loadMore() {
         val tag = "load_more"
         val query = state.query
-        if (query == null || state.jobMap.contains(tag) || state.isEndReached) {
+        if (query.isEmpty() || state.jobMap.contains(tag) || state.isEndReached) {
             return
         }
 
@@ -96,9 +101,11 @@ class SearchViewModel : BaseViewModel() {
         state.jobMap[tag] = job
     }
 
+    class BadQueryError : Exception()
+
     private class SearchState {
 
-        var query: String? = null
+        var query: String = ""
         var isEndReached: Boolean = false
         val jobMap: MutableMap<String, Job> = mutableMapOf()
 

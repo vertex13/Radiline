@@ -43,16 +43,19 @@ class TopStationsViewModel : BaseViewModel() {
         Injector.appComponent.inject(this)
     }
 
-    fun loadTopStations() {
+    fun loadTopStations(forceUpdate: Boolean = false) {
         if (isLoading) {
             return
         }
         launch {
             isLoading = true
             try {
-                val offset = _stations.value?.size ?: 0
+                val offset = if(forceUpdate) 0 else _stations.value?.size ?: 0
                 val newStations = withContext(Dispatchers.Default) {
-                    stationsManager.getTopStations(PAGE_SIZE, offset)
+                    stationsManager.getTopStations(PAGE_SIZE, offset, forceUpdate)
+                }
+                if (forceUpdate) {
+                    _stations.value?.clear()
                 }
                 _stations.value?.addAll(newStations)
                 _stations.notify()

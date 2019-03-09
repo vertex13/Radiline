@@ -5,6 +5,7 @@
     <string name="default_notification_channel_name">Default channel</string>
     <string name="error_play_station">Could not play the station.</string>
     <string name="error_loading_data">Could not load the data.</string>
+    <string name="error_bad_query">The length of the query should be at least 3 letters.</string>
     <string name="main_action_previous">Previous</string>
     <string name="main_item_listeners">Listeners:</string>
     <string name="main_item_bitrate">Bitrate:</string>

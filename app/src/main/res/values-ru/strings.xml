@@ -3,6 +3,7 @@
     <string name="default_notification_channel_name">Канал по умолчанию</string>
     <string name="error_play_station">Не удалось воспроизвести станцию.</string>
     <string name="error_loading_data">Не удалось загрузить данные.</string>
+    <string name="error_bad_query">Длина поискового запроса должна быть не менее 3-х букв.</string>
     <string name="main_action_previous">Предыдущая</string>
     <string name="main_item_listeners">Слушателей:</string>
     <string name="main_item_bitrate">Битрейт:</string>

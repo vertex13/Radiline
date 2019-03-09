@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_base_main.*
 import xyz.skether.radiline.R
+import xyz.skether.radiline.data.shoutcast.ShoutcastError
 import xyz.skether.radiline.domain.Station
 import xyz.skether.radiline.service.PlaybackService
 import xyz.skether.radiline.ui.base.BaseFragment
@@ -28,7 +29,10 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         searchViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
-        searchViewModel.stations.observe(this, Observer(adapter::updateData))
+        searchViewModel.stations.observe(this, Observer {
+            swipeRefreshLayout.isRefreshing = false
+            adapter.updateData(it)
+        })
         searchViewModel.error.observe(this, Observer(::onError))
 
         recyclerView.apply {
@@ -39,6 +43,7 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
             addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS, searchViewModel::loadMore))
             adapter = this@SearchFragment.adapter
         }
+        swipeRefreshLayout.setOnRefreshListener(searchViewModel::restartSearch)
     }
 
     override fun onQueryChanged(query: String) {
@@ -52,9 +57,13 @@ class SearchFragment : BaseFragment(), SearchAdapter.Callback {
     }
 
     private fun onError(error: Throwable?) {
-        if (error != null) {
-            showSnackbarAllowingSkip(R.string.error_loading_data)
-            logError(error)
+        if (error == null) return
+
+        logError(error)
+        swipeRefreshLayout.isRefreshing = false
+        when (error) {
+            is ShoutcastError -> showSnackbarAllowingSkip(R.string.error_loading_data)
+            is SearchViewModel.BadQueryError -> showSnackbarAllowingSkip(R.string.error_bad_query)
         }
     }
 

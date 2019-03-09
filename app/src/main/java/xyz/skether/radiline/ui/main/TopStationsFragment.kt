@@ -28,7 +28,10 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         topStationsViewModel = ViewModelProviders.of(this).get(TopStationsViewModel::class.java)
-        topStationsViewModel.stations.observe(this, Observer(adapter::updateData))
+        topStationsViewModel.stations.observe(this, Observer {
+            swipeRefreshLayout.isRefreshing = false
+            adapter.updateData(it)
+        })
         topStationsViewModel.error.observe(this, Observer(::onError))
 
         recyclerView.apply {
@@ -36,8 +39,14 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
             layoutManager = lm
             addItemDecoration(DividerItemDecoration(context, lm.orientation))
             clearOnScrollListeners()
-            addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS, topStationsViewModel::loadTopStations))
+            addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS) {
+                topStationsViewModel.loadTopStations()
+            })
             adapter = this@TopStationsFragment.adapter
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            topStationsViewModel.loadTopStations(true)
         }
     }
 
@@ -49,6 +58,7 @@ class TopStationsFragment : BaseFragment(), TopStationsAdapter.Callback {
 
     private fun onError(error: Throwable?) {
         if (error != null) {
+            swipeRefreshLayout.isRefreshing = false
             showSnackbarAllowingSkip(R.string.error_loading_data)
             logError(error)
         }

@@ -47,6 +47,12 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
             addOnScrollListener(OnLastItemScrollListener(NUM_LAST_ITEMS, ::loadMoreStations))
             adapter = this@GenresFragment.adapter
         }
+        swipeRefreshLayout.setOnRefreshListener {
+            genresViewModel.loadGenres(currentGenre, true)
+            currentGenre?.also {
+                genresViewModel.loadStations(it, true)
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -129,11 +135,13 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
         genres?.forEach { items.add(GenreMainItem(it)) }
         stations?.forEach { items.add(StationMainItem(it)) }
 
+        swipeRefreshLayout.isRefreshing = false
         adapter.updateData(items)
     }
 
     private fun onError(error: Throwable?) {
         if (error != null) {
+            swipeRefreshLayout.isRefreshing = false
             showSnackbarAllowingSkip(R.string.error_loading_data)
             logError(error)
         }
@@ -151,7 +159,7 @@ class GenresFragment : BaseFragment(), GenresAdapter.Callback {
             genres = genre.subGenres
             stations = genre.stations
             if (genres == null) {
-                genresViewModel.loadSubGenres(genre)
+                genresViewModel.loadGenres(genre)
             }
             if (stations == null) {
                 genresViewModel.loadStations(genre)

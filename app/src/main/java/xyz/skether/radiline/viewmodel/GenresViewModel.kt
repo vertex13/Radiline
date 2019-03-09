@@ -28,7 +28,7 @@ class GenresViewModel : BaseViewModel() {
     private val _genres: MutableLiveData<MutableList<Genre>> by lazy {
         MutableLiveData<MutableList<Genre>>().also {
             it.value = mutableListOf()
-            loadGenres()
+            loadPrimaryGenres()
         }
     }
 
@@ -46,69 +46,83 @@ class GenresViewModel : BaseViewModel() {
         Injector.appComponent.inject(this)
     }
 
-    fun loadSubGenres(genre: Genre) {
-        val key = "load_sub_genres_for_${genre.id}"
-        if (!genre.hasSubGenres || genre.subGenres != null || currentTasks.contains(key)) {
+    fun loadStations(genre: Genre, forceUpdate: Boolean = false) {
+        val tag = "load_stations_for_${genre.id}"
+        if (genre.areAllStationsLoaded && !forceUpdate) {
             return
         }
-        launch {
-            currentTasks.add(key)
-            try {
-                val subGenres = withContext(Dispatchers.Default) {
-                    genresManager.getSecondaryGenres(genre.id)
-                }
-                genre.subGenres = mutableListOf()
-                for (subGenre in subGenres) {
-                    subGenre.parent = genre
-                    genre.subGenres!!.add(subGenre)
-                }
-                _genres.notify()
-            } catch (e: ShoutcastError) {
-                _error.setError(e)
+        launchRequest(tag) {
+            val offset = if (forceUpdate) 0 else genre.stations?.size ?: 0
+            val stations = withContext(Dispatchers.Default) {
+                stationManager.getStationsByGenreId(genre.id, PAGE_SIZE, offset, forceUpdate)
             }
-            currentTasks.remove(key)
+            if (forceUpdate) {
+                genre.areAllStationsLoaded = false
+            }
+            if (stations.size != PAGE_SIZE) {
+                genre.areAllStationsLoaded = true
+            }
+            if (genre.stations == null || forceUpdate) {
+                genre.stations = mutableListOf()
+            }
+            for (station in stations) {
+                station.genre = genre
+                genre.stations!!.add(station)
+            }
+            _genres.notify()
         }
     }
 
-    fun loadStations(genre: Genre) {
-        val key = "load_stations_for_${genre.id}"
-        if (genre.areAllStationsLoaded || currentTasks.contains(key)) {
-            return
-        }
-        launch {
-            currentTasks.add(key)
-            try {
-                val offset = genre.stations?.size ?: 0
-                val stations = withContext(Dispatchers.Default) {
-                    stationManager.getStationsByGenreId(genre.id, PAGE_SIZE, offset)
-                }
-                if (stations.size != PAGE_SIZE) {
-                    genre.areAllStationsLoaded = true
-                }
-                if (genre.stations == null) {
-                    genre.stations = mutableListOf()
-                }
-                for (station in stations) {
-                    station.genre = genre
-                    genre.stations!!.add(station)
-                }
-                _genres.notify()
-            } catch (e: ShoutcastError) {
-                _error.setError(e)
-            }
-            currentTasks.remove(key)
+    fun loadGenres(parentGenre: Genre? = null, forceUpdate: Boolean = false) {
+        if (parentGenre == null) {
+            loadPrimaryGenres(forceUpdate)
+        } else {
+            loadSubGenres(parentGenre, forceUpdate)
         }
     }
 
-    private fun loadGenres() {
+    private fun loadPrimaryGenres(forceUpdate: Boolean = false) {
+        launchRequest("load_primary_genres") {
+            val primaryGenres = withContext(Dispatchers.Default) { genresManager.getPrimaryGenres(forceUpdate) }
+            _genres.value!!.clear()
+            _genres.value!!.addAll(primaryGenres)
+            _genres.notify()
+        }
+    }
+
+    private fun loadSubGenres(genre: Genre, forceUpdate: Boolean = false) {
+        val tag = "load_sub_genres_for_${genre.id}"
+        if (!genre.hasSubGenres
+            || (genre.subGenres != null && !forceUpdate)
+        ) {
+            return
+        }
+
+        launchRequest(tag) {
+            val subGenres = withContext(Dispatchers.Default) {
+                genresManager.getSecondaryGenres(genre.id, forceUpdate)
+            }
+            genre.subGenres = mutableListOf()
+            for (subGenre in subGenres) {
+                subGenre.parent = genre
+                genre.subGenres!!.add(subGenre)
+            }
+            _genres.notify()
+        }
+    }
+
+    private fun launchRequest(tag: String, request: suspend (() -> Unit)) {
+        if (currentTasks.contains(tag)) {
+            return
+        }
         launch {
+            currentTasks.add(tag)
             try {
-                val primaryGenres = withContext(Dispatchers.Default) { genresManager.getPrimaryGenres() }
-                _genres.value!!.addAll(primaryGenres)
-                _genres.notify()
+                request()
             } catch (e: ShoutcastError) {
                 _error.setError(e)
             }
+            currentTasks.remove(tag)
         }
     }
 
