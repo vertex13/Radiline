@@ -6,7 +6,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.crashlytics.android.Crashlytics
 import com.squareup.leakcanary.LeakCanary
+import io.fabric.sdk.android.Fabric
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,6 +25,10 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, Crashlytics())
+        }
 
         Injector.init(this)
 

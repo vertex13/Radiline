@@ -13,6 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="5794dbaaf99f1a81d560868b779b9a1820c3f818" />
+
         <service
             android:name=".service.PlaybackService"
             android:exported="false" />
