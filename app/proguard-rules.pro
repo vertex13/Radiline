@@ -29,3 +29,9 @@
     public static int w(...);
     public static int e(...);
 }
+
+-dontwarn kotlin.**
+-dontwarn kotlin.reflect.jvm.internal.**
+-keep class kotlin.reflect.jvm.internal.** { *; }
+
+-keep class kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoaderImpl

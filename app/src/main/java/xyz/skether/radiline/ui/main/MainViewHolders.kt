@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.annotation.Keep
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.vh_main_genre.view.*
 import kotlinx.android.synthetic.main.vh_main_search.view.*
@@ -13,6 +14,7 @@ import xyz.skether.radiline.R
 import xyz.skether.radiline.ui.base.LayoutId
 import xyz.skether.radiline.ui.base.hideKeyboard
 
+@Keep
 @LayoutId(R.layout.vh_main_station)
 class StationMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -28,6 +30,7 @@ class StationMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
 }
 
+@Keep
 @LayoutId(R.layout.vh_main_genre)
 class GenreMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -40,6 +43,7 @@ class GenreMainVH(view: View) : RecyclerView.ViewHolder(view) {
 
 }
 
+@Keep
 @LayoutId(R.layout.vh_main_search)
 class SearchMainVH(view: View) : RecyclerView.ViewHolder(view) {
 

@@ -1,8 +1,10 @@
 package xyz.skether.radiline.data.db
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Keep
 @Entity(tableName = "station")
 data class DBStation(
     @PrimaryKey var id: Long,
@@ -17,6 +19,7 @@ data class DBStation(
     var updatedAt: Long = System.currentTimeMillis()
 )
 
+@Keep
 @Entity(tableName = "genre")
 data class DBGenre(
     @PrimaryKey var id: Long,
@@ -26,6 +29,7 @@ data class DBGenre(
     var updatedAt: Long = System.currentTimeMillis()
 )
 
+@Keep
 @Entity(tableName = "tune_in")
 data class DBTuneIn(
     @PrimaryKey var base: String,
@@ -33,6 +37,7 @@ data class DBTuneIn(
     var updatedAt: Long = System.currentTimeMillis()
 )
 
+@Keep
 @Entity(tableName = "update_info")
 class DBUpdateInfo(
     @PrimaryKey val methodName: String,
